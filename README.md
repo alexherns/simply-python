@@ -4,7 +4,7 @@ Implementations of many common algorithms and basic data structures, all in Pyth
 
 Currently a work-in-progress as an educational tool for myself, but I'm hoping others will find it useful as well.
 
-#Sorting Algorithms:
+##Sorting Algorithms:
 - Insertion sort
 - Selection sort
 - Merge sort
@@ -17,10 +17,10 @@ Currently a work-in-progress as an educational tool for myself, but I'm hoping o
 - Radix sort (integers only)
 - Counting sort (integers only)
 
-#String Matching Algorithms:
+##String Matching Algorithms:
 - Rabin-Karp
 
-#Basic Data Structures:
+##Basic Data Structures:
 - Linked list
 - Doubly linked list
 - FIFO queue (implemented as doubly linked list, circular buffer, or dict)
@@ -30,7 +30,7 @@ Currently a work-in-progress as an educational tool for myself, but I'm hoping o
 - Max heaps and min heaps (implemented as BST)
 - Union-find structure (implemented as dict or with pointers)
 
-#Graph Algorithms:
+##Graph Algorithms:
 - Create regular graphs
 - BFS
 - Dijkstra (with and without edge distances)
@@ -38,5 +38,5 @@ Currently a work-in-progress as an educational tool for myself, but I'm hoping o
 - SmallWorld model graphs
 - Barabasi-Albert model graphs
 
-#Supporting tools:
+##Supporting tools:
 - Hash-functions

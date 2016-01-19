@@ -37,6 +37,6 @@ Currently a work-in-progress as an educational tool for myself, but I'm hoping o
 - Erdos-Renyi model graphs
 - SmallWorld model graphs
 - Barabasi-Albert model graphs
-- 
+
 #Supporting tools:
 - Hash-functions

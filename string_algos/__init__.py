@@ -1,4 +1,4 @@
-from python_tools import tools
+from simply_python import tools
 
 def check_args(bigstr, littlestr):
     assert isinstance(bigstr, str) and isinstance(littlestr, str),\

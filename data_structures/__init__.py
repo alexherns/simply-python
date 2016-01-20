@@ -54,6 +54,29 @@ class LinkedList(object):
                 return True
         return False
 
+    def reverse(self):
+        """Reverse the sequence of elements, in place in O(n)"""
+        curr= self.head
+        prev= None
+        while curr.child:
+            child= curr.child
+            curr.child= prev
+            prev= curr
+            curr= child
+        self.head= curr
+        self.head.child= prev
+
+    def find_middle(self):
+        """Return middle node"""
+        node= self.head
+        middle= node
+        while node.child:
+            node= node.child
+            middle= middle.child
+            if node.child:
+                node= node.child
+        return middle
+
     def __iter__(self):
         """Iterates through nodes in LinkedList"""
         node= self.head
@@ -372,6 +395,16 @@ class BST(object):
         if self.right:
             for node in self.right:
                 yield node
+
+    def convert_to_ll(self):
+        """Returns the BST as a linked list"""
+        ll= LinkedList()
+        for subtree in self:
+            node= LinkedListNode(subtree.data)
+            ll.insert(node)
+        ll.reverse()
+        return ll
+
 
     def find_minimum(self):
         """Get minimum node in tree"""

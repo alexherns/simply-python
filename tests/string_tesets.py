@@ -1,5 +1,5 @@
 import unittest
-from python_tools import string_algos
+from simply_python import string_algos
 
 string_test_suite= [
         ('123', '1', [0]),

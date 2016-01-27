@@ -29,6 +29,8 @@ Currently a work-in-progress as an educational tool for myself, but I'm hoping o
 - Priority queue (implemented as BST or defaultdict)
 - Max heaps and min heaps (implemented as BST)
 - Union-find structure (implemented as dict or with pointers)
+- Hash Table (simple to efficient versions)
+- StringBuffer (faster string concatenation)
 
 ##Graph Algorithms:
 - Create regular graphs

@@ -675,11 +675,25 @@ class BinaryTree(object):
                 return False
         return True
 
-    def sift_down(self, comp_fun, source=0):
+    #    def to_sorted_list(self, comp_fun):
+    #        """Returns binary tree as list sorted by heap structure. Currently
+    #        broken"""
+    #        if not self.is_heaped(comp_fun):
+    #            self.heapify(comp_fun)
+    #        output= type(self)(self.array[:])
+    #        end= len(output)-1
+    #        while end > 0:
+    #            output[end], output[0]= output[0], output[end]
+    #            end-= 1
+    #            output.sift_down(comp_fun, source=0, end=end)
+    #        return output.array
+
+    def sift_down(self, comp_fun, source=0, end=None):
         """
         Moves value from source down to its proper place in the binary tree
         """
-        if BinaryTree.l_child(source) >= len(self):
+        if not end: end= len(self)
+        if BinaryTree.l_child(source) >= end:
             return
         swap= source
         l_child, r_child= BinaryTree.children(source)
@@ -690,7 +704,7 @@ class BinaryTree(object):
         if swap == source:
             return
         self[source], self[swap]= self[swap], self[source]
-        self.sift_down(comp_fun, swap)
+        self.sift_down(comp_fun, swap, end=end)
 
     def sift_up(self, comp_fun, source= -1):
         """
@@ -710,7 +724,7 @@ class BinaryTree(object):
         Heapify self.array according to comp_fun
         """
         for i in range(BinaryTree.parent(len(self))+1)[::-1]:
-            self.sift_down(comp_fun, source=i)
+            self.sift_down(comp_fun, source=i, end=len(self))
 
 
 
@@ -732,8 +746,9 @@ class MaxHeap(BinaryTree):
     def is_heaped(self, comp_fun=less_than):
         return super(MaxHeap, self).is_heaped(MaxHeap.less_than)
 
-    def sift_down(self, comp_fun=less_than, source=0):
-        return super(MaxHeap, self).sift_down(MaxHeap.less_than, source)
+    def sift_down(self, comp_fun, source=0, end=None):
+        return super(MaxHeap, self).sift_down(MaxHeap.less_than, source=source,
+                end=end)
 
     def sift_up(self, comp_fun=less_than, source=-1):
         return super(MaxHeap, self).sift_up(MaxHeap.less_than, source)
@@ -741,6 +756,8 @@ class MaxHeap(BinaryTree):
     def add(self, value, comp_fun=less_than):
         return super(MaxHeap, self).add(value, MaxHeap.less_than)
 
+    def to_sorted_list(self):
+        return super(MaxHeap, self).to_sorted_list(MaxHeap.less_than)
 
 
 class MinHeap(BinaryTree):
@@ -761,14 +778,18 @@ class MinHeap(BinaryTree):
     def is_heaped(self, comp_fun=greater_than):
         return super(MinHeap, self).is_heaped(MinHeap.greater_than)
 
-    def sift_down(self, comp_fun=greater_than, source=0):
-        return super(MinHeap, self).sift_down(MinHeap.greater_than, source)
+    def sift_down(self, comp_fun=greater_than, source=0, end=None):
+        return super(MinHeap, self).sift_down(MinHeap.greater_than, source,
+                end=end)
 
     def sift_up(self, comp_fun=greater_than, source=-1):
         return super(MinHeap, self).sift_up(MinHeap.greater_than, source)
 
     def add(self, value, comp_fun=greater_than):
         return super(MinHeap, self).add(value, MinHeap.greater_than)
+
+    def to_sorted_list(self):
+        return super(MinHeap, self).to_sorted_list(MinHeap.greater_than)
 
 
 
@@ -831,3 +852,125 @@ class UnionFindPointer(object):
 
 
 
+class LinearMap(object):
+    """Implementations of a list-based hash-table -- inspired by Allen Downey's
+    *Think Complexity*"""
+
+
+    def __init__(self):
+        self.map= []
+
+    def add(self, key, value):
+        """Add value indexed by key"""
+        self.map.append((key, value))
+
+    def get(self, key):
+        """Get value indexed by key"""
+        for iterkey, value in self.map:
+            if iterkey == key:
+                return value
+        raise KeyError
+
+
+
+class BetterMap(object):
+    """Implementation of a "better" list-of-lists hash-table -- inspired by
+    Allen Downey's *Think Complexity*"""
+
+
+    def __init__(self, size=2):
+        self.size= size
+        self.maps= []
+        for _ in range(size):
+            self.maps.append(LinearMap())
+
+    def add(self, key, value):
+        """Adds value indexed by key"""
+        m= self.maps[self.find_map(key)]
+        m.add(key, value)
+
+    def get(self, key):
+        """Return value indexed by query"""
+        m= self.maps[self.find_map(key)]
+        return m.get(key)
+
+    def find_map(self, key):
+        """Returns index of map hashed by key"""
+        return hash(key) % self.size
+
+
+
+class HashTable(object):
+    """Implementation of a true linear-time hash-table -- inspired by Allen
+    Downey's *Think Complexity*"""
+
+
+    def __init__(self):
+        """Initialize an instance of a HashTable"""
+        self.size= 0
+        self.maps= BetterMap(size=2)
+
+    def resize(self):
+        """Expand hashmap size to twice current"""
+        new_maps= BetterMap(size=self.size*2)
+        for m in self.maps.maps:
+            for key, value in m.map:
+                new_maps.add(key, value)
+        self.maps= new_maps
+
+    def add(self, key, value):
+        """Add value indexed by key"""
+        self.maps.add(key, value)
+        self.size+= 1
+        if self.size == self.maps.size:
+            self.resize()
+
+    def get(self, key):
+        """Return value indexed by key"""
+        return self.maps.get(key)
+
+    def __setitem__(self, key, value):
+        self.add(key, value)
+
+    def __getitem__(self, key):
+        return self.get(key)
+
+
+
+class StringBuffer(object):
+    """Implementation of a Java-like StringBuffer"""
+
+
+    def __init__(self, s=''):
+        self.buffer= list(s)
+
+    def append(self, s):
+        """Append string s"""
+        assert isinstance(s, str) or isinstance(s, StringBuffer)
+        self.buffer.extend(list(s))
+
+    def __getitem__(self, index):
+        assert isinstance(index, int)
+        return self.buffer[index]
+
+    def __getslice__(self, start, end):
+        assert isinstance(start, int)
+        assert isinstance(end, int)
+        return ''.join(self.buffer[start:end])
+
+    def __setitem__(self, index, char):
+        assert isinstance(index, int)
+        assert isinstance(char, str)
+        assert len(char) == 1
+        self.buffer[index]= char
+
+    def __setslice__(self, start, end, substr):
+        assert isinstance(start, int)
+        assert isinstance(end, int)
+        assert isinstance(substr, str)
+        assert len(substr) == end-start
+        self.buffer[start:end]= list(substr)
+
+    def __add__(self, s):
+        assert isinstance(s, str) or isinstance(s, StringBuffer)
+        return ''.join(self.buffer + list(s[:]))

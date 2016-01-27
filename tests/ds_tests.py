@@ -319,9 +319,7 @@ class BST_PQTests(unittest.TestCase):
             contents.append(pq.pop())
         self.assertTrue(sorting.is_sorted(contents))
 
-
-
-#class GraphTests(unittest.TestCase):
+class GraphTests(unittest.TestCase): 
 #
 #    def test_dijkstra2(self):
 #        vertices= [Graph.Vertex(i) for i in range(10)]
@@ -458,21 +456,150 @@ class BST_PQTests(unittest.TestCase):
 #            B.heapify(greater_than)
 #            self.assertTrue(B.is_heaped(greater_than))
 #
-#class MaxHeapTests(unittest.TestCase):
-#
-#    def test_init(self):
-#        import random
-#        for i in range(10, 100):
-#            B= miscellany.MaxHeap([random.random() for _ in range(i)])
-#            self.assertTrue(B.is_heaped())
-#
-#class MinHeapTests(unittest.TestCase):
-#    
-#    def test_init(self):
-#        import random
-#        for i in range(10, 100):
-#            B= miscellany.MinHeap([random.random() for _ in range(i)])
-#            self.assertTrue(B.is_heaped())
+    pass
+
+class MaxHeapTests(unittest.TestCase):
+
+    def test_init(self):
+        import random
+        for i in range(10, 100):
+            B= data_structures.MaxHeap([random.random() for _ in range(i)])
+            self.assertTrue(B.is_heaped())
+
+class MinHeapTests(unittest.TestCase):
+    
+    def test_init(self):
+        import random
+        for i in range(10, 100):
+            B= data_structures.MinHeap([random.random() for _ in range(i)])
+            self.assertTrue(B.is_heaped())
+
+class LinearHashTests(unittest.TestCase):
+
+    def test_init(self):
+        table= data_structures.LinearMap()
+        self.assertTrue(table.map == [])
+
+    def test_add(self):
+        table= data_structures.LinearMap()
+        table.add('one', 1)
+        table.add('two', 2)
+        self.assertEqual(table.map[0], ('one', 1))
+        self.assertEqual(table.map[1], ('two', 2))
+
+    def test_get(self):
+        table= data_structures.LinearMap()
+        self.assertRaises(KeyError, table.get, 'one')
+        table.add('one', 1)
+        self.assertEqual(table.get('one'), 1)
+        self.assertRaises(KeyError, table.get, 'two')
+        table.add('two', 2)
+        self.assertEqual(table.get('two'), 2)
+
+class BetterHashTests(unittest.TestCase):
+
+    def test_init(self):
+        table= data_structures.BetterMap()
+        self.assertEqual(len(table.maps), 2)
+        self.assertEqual(len(table.maps), table.size)
+        self.assertTrue(isinstance(table.maps[0], data_structures.LinearMap))
+
+    def test_hashing(self):
+        table= data_structures.BetterMap()
+        self.assertEqual(table.find_map('hello'), hash('hello') % table.size)
+
+    def test_add(self):
+        table= data_structures.BetterMap()
+        table.add('one', 1)
+        table.add('two', 2)
+        self.assertEqual(table.maps[table.find_map('one')].map[0], ('one', 1))
+
+    def test_get(self):
+        table= data_structures.BetterMap()
+        self.assertRaises(KeyError, table.get, 'one')
+        table.add('one', 1)
+        self.assertEqual(table.get('one'), 1)
+        self.assertRaises(KeyError, table.get, 'two')
+        table.add('two', 2)
+        self.assertEqual(table.get('two'), 2)
+
+class HashTableTests(unittest.TestCase):
+
+    def test_init(self):
+        table= data_structures.HashTable()
+        self.assertTrue(table.size == 0)
+        self.assertTrue(isinstance(table.maps, data_structures.BetterMap))
+
+    def test_add(self):
+        table= data_structures.HashTable()
+        table.add('one', 1)
+        self.assertEqual(table.maps.maps[table.maps.find_map('one')].map[0],
+                ('one', 1))
+
+    def test_get(self):
+        table= data_structures.HashTable()
+        self.assertRaises(KeyError, table.get, 'one')
+        table.add('one', 1)
+        self.assertEqual(table.get('one'), 1)
+        self.assertRaises(KeyError, table.get, 'two')
+
+    def test_resize(self):
+        table= data_structures.HashTable()
+        for i in range(100):
+            table.add(str(i), i)
+        self.assertEqual(table.size, 100)
+        self.assertEqual(table.maps.size, 128)
+
+class StringBufferTests(unittest.TestCase):
+
+    def test_init(self):
+        sb= data_structures.StringBuffer()
+        self.assertEqual([], sb.buffer)
+        sb= data_structures.StringBuffer('hello')
+        self.assertEqual(['h', 'e', 'l', 'l', 'o'], sb.buffer)
+
+    def test_append(self):
+        sb= data_structures.StringBuffer()
+        sb.append('hello')
+        self.assertEqual(['h', 'e', 'l', 'l', 'o'], sb.buffer)
+        sb.append('world')
+        self.assertEqual(['h', 'e', 'l', 'l', 'o', 'w', 'o', 'r', 'l', 'd'], sb.buffer)
+
+    def test_getitem(self):
+        sb= data_structures.StringBuffer()
+        self.assertRaises(IndexError, sb.__getitem__, 0)
+        sb= data_structures.StringBuffer('hello')
+        self.assertEqual('h', sb[0])
+        self.assertRaises(IndexError, sb.__getitem__, 12)
+
+    def test_getslice(self):
+        sb= data_structures.StringBuffer()
+        self.assertEqual('', sb[0:5])
+        sb= data_structures.StringBuffer('hello')
+        self.assertEqual('hell', sb[0:4])
+        self.assertEqual('hello', sb[0:10])
+        self.assertEqual('', sb[10:20])
+        self.assertEqual('hello', sb[:])
+
+    def test_setitem(self):
+        sb= data_structures.StringBuffer()
+        self.assertRaises(IndexError, sb.__setitem__, 0, 'a')
+        sb= data_structures.StringBuffer('hello')
+        sb[2]= 'e'
+        self.assertEqual('heelo', sb[:])
+        self.assertRaises(IndexError, sb.__setitem__, 10, 'a')
+
+    def test_setslice(self):
+        sb= data_structures.StringBuffer()
+        self.assertRaises(AssertionError, sb.__setslice__, 0, 5, 'he')
+        sb[0:2]= 'he'
+        self.assertEqual(sb.buffer, ['h', 'e'])
+
+    def test_concat(self):
+        sb= data_structures.StringBuffer('hello')
+        wb= data_structures.StringBuffer('world')
+        self.assertEqual(sb+'world', 'helloworld')
+        self.assertEqual(sb+wb, 'helloworld')
 
 
 if __name__ == '__main__':

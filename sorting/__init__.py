@@ -54,6 +54,29 @@ def merged(l1, l2):
     for lj in l2[j:m]: out.append(lj)
     return out
 
+def qs_inplace(l, lo=None, hi=None):
+    """Uses quicksort to sort l in place"""
+    if not isinstance(lo, int): lo= 0
+    if not isinstance(hi, int): hi= len(l)-1
+    if hi-lo > 0:
+        p= partition_inplace(l, lo, hi)
+        qs_inplace(l, lo, p-1)
+        qs_inplace(l, p+1, hi)
+
+def partition_inplace(l, lo, hi):
+    """An in-place partition function for quicksort"""
+    pivot_index= hi
+    pivot_val= l[hi]
+    i= lo
+    while i < pivot_index:
+        if l[i] > pivot_val:
+            l[i], l[pivot_index-1]=l[pivot_index-1], l[i]
+            l[pivot_index], l[pivot_index-1]= l[pivot_index-1], l[pivot_index]
+            pivot_index-= 1
+        else:
+            i+= 1
+    return pivot_index
+
 def quicksort(l):
     """
     uses quicksort to sort l given lo and hi (this is a wrapper to simplify
@@ -72,21 +95,20 @@ def _quick_recursion(l, lo, hi):
     _quick_recursion(l, p+1, hi)
     return l
 
-def pivot_func(l):
+def pivot_func(l, lo, hi):
     """
     An implementation of a pivot function for quick sort, using the triple-median method
     Returns:
         index of pivot
     """
-    n= len(l)
-    med= sorted([l[0], l[-1], l[n/2]])[1]
-    return med
-    if med == l[0]:
-        return 0
-    elif med == l[-1]:
-        return n-1
-    elif med == l[n/2]:
-        return n/2
+    med= sorted([l[lo], l[hi], l[(lo+hi)/2]])[1]
+    if l[lo] == med:
+        index= lo
+    elif l[hi] == med:
+        index= hi
+    else:
+        index= (lo+hi)/2
+    return med, index
 
 def partition(l, lo, hi):
     """
@@ -94,7 +116,7 @@ def partition(l, lo, hi):
     Returns:
         Two partitions, where items in l1 are <= l[k] and items in l2 are > l[k]
     """
-    k= pivot_func(l[lo:hi])
+    k, _= pivot_func(l, lo, hi-1)
     l1= [i for i in l[lo:hi] if i < k]
     l2= [i for i in l[lo:hi] if i > k]
     l[lo:hi]= l1+[i for i in l[lo:hi] if i == k]+l2
@@ -273,5 +295,6 @@ def sift_down(l, start, end):
 
 
 if __name__ == '__main__':
-    import random
-    #evaluate_algo(heap_sort)
+    l= [2, 4, 8, 3, 7, 6]
+    qs_inplace(l)
+    print l

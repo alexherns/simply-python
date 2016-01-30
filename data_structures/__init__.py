@@ -944,6 +944,9 @@ class StringBuffer(object):
     def __init__(self, s=''):
         self.buffer= list(s)
 
+    def __len__(self):
+        return len(self.buffer)
+
     def append(self, s):
         """Append string s"""
         assert isinstance(s, str) or isinstance(s, StringBuffer)

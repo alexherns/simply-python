@@ -7,11 +7,29 @@ class LinkedList(object):
     def __init__(self):
         self.head= None
 
+    def build_from_list(self, l):
+        """Adds items from l into beginning of LL"""
+        for item in l[::-1]:
+            self.insert(LinkedListNode(item))
+
     def insert(self, node):
         """Inserts node data at beginning of list"""
         node.child= self.head
         self.head= node
-        return
+
+    def partition(self, x):
+        """Partitions LL around pivot x"""
+        parent= self.head
+        explore_node= parent.child
+        while explore_node:
+            if explore_node < x:
+                parent.child= explore_node.child
+                explore_node.child= self.head
+                self.head= explore_node
+                explore_node= parent.child
+            else:
+                parent= explore_node
+                explore_node= explore_node.child
     
     def append(self, node, old_node):
         """Appends node data after old node"""
@@ -39,8 +57,8 @@ class LinkedList(object):
     def pop(self):
         """Removes and returns head"""
         node= self.head
+        self.head= node.child
         node.child= None
-        self.head= self.head.child
         return node
 
     def peek(self):
@@ -67,7 +85,9 @@ class LinkedList(object):
         self.head.child= prev
 
     def find_middle(self):
-        """Return middle node"""
+        """Return middle node.
+        Time: O(n)
+        Space: O(1)"""
         node= self.head
         middle= node
         while node.child:
@@ -76,6 +96,47 @@ class LinkedList(object):
             if node.child:
                 node= node.child
         return middle
+
+    def uniquify(self):
+        """Deletes any duplicate items in the LL (in-place).
+        Time: O(n^2)
+        Space: O(1)"""
+        node1= self.head
+        while node1.child:
+            node2= node1.child
+            while node2:
+                if node1 == node2:
+                    self.delete(node2)
+                    break
+                node2= node2.child
+            node1= node1.child
+
+    def uniquify_faster(self):
+        """Deletes any duplicate items in the LL (using external buffer).
+        Time: O(n)
+        Space: O(n)"""
+        node= self.head
+        seen= set([node.data])
+        while node.child:
+            child= node.child
+            if child.data in seen:
+                node.child= child.child
+            else:
+                seen.add(child.data)
+            node= node.child
+
+    def kth_from_end(self, k):
+        """Returns kth item from end of list"""
+        node1= self.head
+        node2= self.head
+        for _ in range(k):
+            if not node2.child:
+                return node1
+            node2= node2.child
+        while node2:
+            node1= node1.child
+            node2= node2.child
+        return node1
 
     def __iter__(self):
         """Iterates through nodes in LinkedList"""
@@ -101,6 +162,18 @@ class LinkedListNode(object):
         self.data= data
         self.child= None
     
+    def __lt__(self, other):
+        return self.data < other
+
+    def __le__(self, other):
+        return self.data <= other
+
+    def __ge__(self, other):
+        return self.data >= other
+
+    def __gt__(self, other):
+        return self.data > other
+
     def __eq__(self, other):
         return self.data == other
 
@@ -941,8 +1014,14 @@ class StringBuffer(object):
     """Implementation of a Java-like StringBuffer"""
 
 
-    def __init__(self, s=''):
-        self.buffer= list(s)
+    def __init__(self, s='', data_structure='list'):
+        if data_structure == 'list':
+            self.buffer= list(s)
+        elif data_structure == 'deque':
+            from collections import deque
+            self.buffer= deque(s)
+        else: 
+            raise ValueError, 'Data structure must be list or deque'
 
     def __len__(self):
         return len(self.buffer)
@@ -952,6 +1031,10 @@ class StringBuffer(object):
         assert isinstance(s, str) or isinstance(s, StringBuffer)
         self.buffer.extend(list(s))
 
+    def __iadd__(self, s):
+        assert isinstance(s, str) or isinstance(s, StringBuffer)
+        self.append(s)
+
     def __getitem__(self, index):
         assert isinstance(index, int)
         return self.buffer[index]
@@ -959,7 +1042,7 @@ class StringBuffer(object):
     def __getslice__(self, start, end):
         assert isinstance(start, int)
         assert isinstance(end, int)
-        return ''.join(self.buffer[start:end])
+        return StringBuffer(self.buffer[start:end])
 
     def __setitem__(self, index, char):
         assert isinstance(index, int)
@@ -975,5 +1058,18 @@ class StringBuffer(object):
         self.buffer[start:end]= list(substr)
 
     def __add__(self, s):
-        assert isinstance(s, str) or isinstance(s, StringBuffer)
-        return ''.join(self.buffer + list(s[:]))
+        assert isinstance(s, StringBuffer) or isinstance(s, str)
+        if type(s) == str:
+            s= StringBuffer(s)        
+        copy= self[:]
+        copy.append(s)
+        return copy
+
+    def __iter__(self):
+        return self.buffer.__iter__()
+
+    def __str__(self):
+        return ''.join(self.buffer)
+
+    def __eq__(self, other):
+        return self.buffer == other.buffer

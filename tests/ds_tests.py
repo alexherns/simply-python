@@ -69,6 +69,76 @@ class LinkedListTests(unittest.TestCase):
         ll.reverse()
         self.assertEqual(nodes[5], ll.find_middle())
 
+    def test_uniquify(self):
+        nodes= [data_structures.LinkedListNode(i) for i in range(10)]
+        nodes= nodes + [data_structures.LinkedListNode(i) for i in range(10)]
+        nodes= nodes + [data_structures.LinkedListNode(i) for i in range(10)]
+        self.assertEqual(len(nodes), 30)
+        ll1= data_structures.LinkedList()
+        ll2= data_structures.LinkedList()
+        for node in nodes:
+            ll1.insert(node)
+        for node in nodes[20:]:
+            ll2.insert(node)
+        ll1.uniquify()
+        ll2.uniquify()
+        self.assertEqual([node for node in ll1],
+                [node for node in ll2])
+    
+    def test_uniquify_faster(self):
+        nodes= [data_structures.LinkedListNode(i) for i in range(10)]
+        nodes= nodes + [data_structures.LinkedListNode(i) for i in range(10)]
+        nodes= nodes + [data_structures.LinkedListNode(i) for i in range(10)]
+        self.assertEqual(len(nodes), 30)
+        ll1= data_structures.LinkedList()
+        ll2= data_structures.LinkedList()
+        for node in nodes:
+            ll1.insert(node)
+        for node in nodes[20:]:
+            ll2.insert(node)
+        ll1.uniquify_faster()
+        ll2.uniquify_faster()
+        self.assertEqual([node for node in ll1],
+                [node for node in ll2])
+
+    def test_kth_back(self):
+        nodes= [data_structures.LinkedListNode(i) for i in range(6)]
+        ll= data_structures.LinkedList()
+        for node in nodes:
+            ll.insert(node)
+        for k in range(1, 7):
+            self.assertEqual(nodes[k-1], ll.kth_from_end(k))
+
+    def test_list_init(self):
+        ll= data_structures.LinkedList()
+        l= [0, 1, 2, 3, 4, 5, 6]
+        ll.build_from_list(l)
+        for i in l:
+            item= ll.pop()
+            self.assertEqual(item, data_structures.LinkedListNode(i))
+
+    def test_partition(self):
+        tests= [
+                ([1], [1]),
+                ([8], [8]),
+                ([1, 8], [1, 8]),
+                ([8, 1], [1, 8]),
+                ([1, 2, 8, 9], [2, 1, 8, 9]),
+                ([9, 8, 1, 2], [2, 1, 9, 8]),
+                ([1, 2, 3], [3, 2, 1]),
+                ([8, 9, 10], [8, 9, 10])
+                ]
+        self.assertTrue(data_structures.LinkedListNode(2)<7)
+        for test_list, answer_list in tests:
+            lltest= data_structures.LinkedList()
+            llanswer= data_structures.LinkedList()
+            lltest.build_from_list(test_list)
+            llanswer.build_from_list(answer_list)
+            lltest.partition(7)
+            for _ in range(len(test_list)):
+                self.assertEqual(lltest.pop(), llanswer.pop())
+        
+
 class DoublyLinkedListNodeTests(unittest.TestCase):
 
     def test_init(self):
@@ -574,19 +644,19 @@ class StringBufferTests(unittest.TestCase):
 
     def test_getslice(self):
         sb= data_structures.StringBuffer()
-        self.assertEqual('', sb[0:5])
+        self.assertEqual('', str(sb[0:5]))
         sb= data_structures.StringBuffer('hello')
-        self.assertEqual('hell', sb[0:4])
-        self.assertEqual('hello', sb[0:10])
-        self.assertEqual('', sb[10:20])
-        self.assertEqual('hello', sb[:])
+        self.assertEqual('hell', str(sb[0:4]))
+        self.assertEqual('hello', str(sb[0:10]))
+        self.assertEqual('', str(sb[10:20]))
+        self.assertEqual('hello', str(sb[:]))
 
     def test_setitem(self):
         sb= data_structures.StringBuffer()
         self.assertRaises(IndexError, sb.__setitem__, 0, 'a')
         sb= data_structures.StringBuffer('hello')
         sb[2]= 'e'
-        self.assertEqual('heelo', sb[:])
+        self.assertEqual('heelo', str(sb))
         self.assertRaises(IndexError, sb.__setitem__, 10, 'a')
 
     def test_setslice(self):
@@ -598,8 +668,8 @@ class StringBufferTests(unittest.TestCase):
     def test_concat(self):
         sb= data_structures.StringBuffer('hello')
         wb= data_structures.StringBuffer('world')
-        self.assertEqual(sb+'world', 'helloworld')
-        self.assertEqual(sb+wb, 'helloworld')
+        self.assertEqual(str(sb+'world'), 'helloworld')
+        self.assertEqual(str(sb+wb), 'helloworld')
 
 
 if __name__ == '__main__':

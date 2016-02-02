@@ -355,6 +355,19 @@ class FIFO_queue(DoublyLinkedList):
         raise NotImplementedError('Append not implemented for FIFO queues')
 
 
+class Stack(LinkedList):
+    """
+    Implementation of a LIFO queue (stack), using a linked list
+    """
+
+    def pop(self):
+        return LinkedList.pop(self).data
+
+    def add(self, node):
+        if not isinstance(node, LinkedListNode):
+            node= LinkedListNode(node)
+        LinkedList.insert(self, node)
+
 
 class FIFO_dict(dict):
     """

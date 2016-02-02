@@ -154,6 +154,18 @@ class LinkedListTests(unittest.TestCase):
             ll.build_from_list(l)
             self.assertEqual(ll.is_palindrome(), outcome)
 
+class StackTests(unittest.TestCase):
+    
+    def test_add(self):
+        stack= data_structures.Stack()
+        stack.add(0)
+        self.assertEqual(stack.pop(), 0)
+        stack.add(1)
+        self.assertEqual(stack.pop(), 1)
+        stack.add(2)
+        stack.add(3)
+        self.assertEqual(stack.pop(), 3)
+        self.assertEqual(stack.pop(), 2)
 
 class DoublyLinkedListNodeTests(unittest.TestCase):
 

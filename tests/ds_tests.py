@@ -138,6 +138,22 @@ class LinkedListTests(unittest.TestCase):
             for _ in range(len(test_list)):
                 self.assertEqual(lltest.pop(), llanswer.pop())
         
+    def test_palindromic(self):
+        tests= [
+                ([0, 1, 0], True),
+                ([0, 1, 2, 1, 0], True),
+                ([0], True),
+                ([0, 2, 1], False),
+                ([0, 2], False),
+                ([0, 2, 1, 4], False),
+                ([0, 2, 1, 4, 1, 2, 0], True),
+                ([1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 2], False)
+                ]
+        for l, outcome in tests:
+            ll= data_structures.LinkedList()
+            ll.build_from_list(l)
+            self.assertEqual(ll.is_palindrome(), outcome)
+
 
 class DoublyLinkedListNodeTests(unittest.TestCase):
 

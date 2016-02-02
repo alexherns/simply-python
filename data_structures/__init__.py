@@ -7,6 +7,13 @@ class LinkedList(object):
     def __init__(self):
         self.head= None
 
+    def __len__(self):
+        """Returns length"""
+        count= 0
+        for _ in self:
+            count+= 1
+        return count
+
     def build_from_list(self, l):
         """Adds items from l into beginning of LL"""
         for item in l[::-1]:
@@ -138,6 +145,29 @@ class LinkedList(object):
             node2= node2.child
         return node1
 
+    def is_palindrome(ll):
+        """Checks if linked list is palindromic"""
+        def palindrome_subfunc(node, k):
+            """A recursive subfunction for is_palindrome"""
+            if k <= 0:
+                return node.child
+            elif k== 1:
+                if node == node.child:
+                    return node.child.child
+                return False
+            else:
+                child= palindrome_subfunc(node.child, k-2)
+                if child and node == child:
+                    return child.child
+                return False
+        node= ll.head
+        k= len(ll)-1
+        if k == 0: return True
+        child= palindrome_subfunc(node.child, k-2)
+        if node == child and isinstance(child, LinkedListNode):
+            return True
+        return False
+
     def __iter__(self):
         """Iterates through nodes in LinkedList"""
         node= self.head
@@ -148,7 +178,7 @@ class LinkedList(object):
 
     def __repr__(self):
         if self.head:
-            node_str= '\n'.join([str(node) for node in self.iter_nodes()])
+            node_str= '\n'.join([str(node) for node in self])
         else: node_str= 'None'
         return "<LinkedList: head={self.head}\n{node_str}>".format(self=self,
                 node_str=node_str)

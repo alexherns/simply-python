@@ -23,7 +23,8 @@ Currently a work-in-progress as an educational tool for myself, but I'm hoping o
 ##Basic Data Structures:
 - Linked list
 - Doubly linked list
-- FIFO queue (implemented as doubly linked list, circular buffer, or dict)
+- FIFO queue (implemented as singly and doubly linked list, circular buffer, or dict)
+- Stack (implemented as singly linked list)
 - Circular buffer
 - Binary search tree (implemented with pointers or as an array)
 - Priority queue (implemented as BST or defaultdict)

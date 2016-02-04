@@ -272,6 +272,41 @@ class FIFO_QueueTests(unittest.TestCase):
             fifo.add(node)
         for node in nodes:
             self.assertEqual(fifo.pop(), node)
+
+class Queue_Tests(unittest.TestCase):
+
+    def test_init(self):
+        queue= data_structures.Queue()
+        self.assertIsNone(queue.head)
+        self.assertIsNone(queue.tail)
+
+    def test_enqueue(self):
+        queue= data_structures.Queue()
+        nodes= [data_structures.LinkedListNode(i) for i in range(1,11)]
+        queue.enqueue(nodes[0])
+        self.assertEqual(queue.head, nodes[0])
+        self.assertEqual(queue.tail, nodes[0])
+        queue.enqueue(nodes[1])
+        self.assertEqual(queue.head, nodes[0])
+        self.assertEqual(queue.tail, nodes[1])
+        for node in nodes[2:]:
+            queue.enqueue(node)
+        self.assertEqual(queue.head, nodes[0])
+        self.assertEqual(queue.tail, nodes[-1])
+
+    def test_dequeue(self):
+        queue= data_structures.Queue()
+        nodes= [data_structures.LinkedListNode(i) for i in range(1, 11)]
+        queue.enqueue(nodes[0])
+        self.assertEqual(queue.deqeue(), nodes[0])
+        self.assertIsNone(queue.head)
+        self.assertIsNone(queue.tail)
+        for node in nodes:
+            queue.enqueue(node)
+        for node in nodes:
+            self.assertEqual(queue.deqeue(), node)
+        self.assertIsNone(queue.head)
+        self.assertIsNone(queue.tail)
         
 class FIFO_DictTests(unittest.TestCase):
 

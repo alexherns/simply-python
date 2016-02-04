@@ -355,6 +355,40 @@ class FIFO_queue(DoublyLinkedList):
         raise NotImplementedError('Append not implemented for FIFO queues')
 
 
+
+class Queue(object):
+    """Implementation of a FIFO queue using a linked list"""
+
+
+    def __init__(self):
+        self.head= None
+        self.tail= None
+
+    def enqueue(self, node):
+        """Adds node to bottom of queue"""
+        if not isinstance(node, LinkedListNode):
+            node= LinkedListNode(node)
+        if self.tail == None:
+            self.tail= node
+            self.head= node
+        else:
+            self.tail.child= node
+            self.tail= node
+
+    def deqeue(self):
+        """Removes nodes from top of queue"""
+        if not self.head:
+            return None
+        tmp= self.head
+        if tmp == self.tail:
+            self.head= None
+            self.tail= None
+        else:
+            self.head= tmp.child
+        return tmp.data
+
+
+
 class Stack(LinkedList):
     """
     Implementation of a LIFO queue (stack), using a linked list

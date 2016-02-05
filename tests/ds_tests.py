@@ -439,6 +439,28 @@ class BST_Tests(unittest.TestCase):
         bst= data_structures.BST.build_from_sorted(l)
         ll= bst.convert_to_ll()
         self.assertEqual(ll.head, 0)
+
+    def test__balanced(self):
+        bst= data_structures.BST.build_from_sorted([1, 2])
+        self.assertEqual(bst._isbalanced(), (1, 2))
+        bst= data_structures.BST.build_from_sorted([1, 2, 3])
+        self.assertEqual(bst._isbalanced(), (2,2))
+        bst= data_structures.BST.build_from_sorted([1, 2, 3, 4])
+        self.assertEqual(bst._isbalanced(), (False, False))
+        bst= data_structures.BST.build_from_sorted([1, 2, 3, 4, 5])
+        self.assertEqual(bst._isbalanced(), (2, 3))
+
+    def test_isBalanced(self):
+        tests= [([1, 2], True),
+                ([1, 2, 3], True),
+                ([1, 2, 3, 4], False),
+                (range(1,7), True),
+                (range(1,13), False),
+                (range(1,16), True),
+                (range(1,17), False)]
+        for test_list, response in tests:
+            bst= data_structures.BST.build_from_sorted(test_list)
+            self.assertEqual(bst.isBalanced(), response)
         
 
 class BST_PQTests(unittest.TestCase):

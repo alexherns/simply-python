@@ -621,6 +621,36 @@ class BST(object):
             bst.right.parent= bst
         return bst
 
+    def isBalanced(self):
+        """Returns if BST is balanced (i.e. has no left or right subtrees with
+        length difference more than 1)"""
+        if self._isbalanced()[0] == False:
+            return False
+        else:
+            return True
+
+    def _isbalanced(self):
+        """Worker function for the isBalanced method"""
+        if self.left == None:
+            lmin, lmax= 0, 0
+        else:
+            lmin, lmax= self.left._isbalanced()
+            if lmin == False:
+                return False, False
+        if self.right == None:
+            rmin, rmax= 0, 0
+        else:
+            rmin, rmax= self.right._isbalanced()
+            if rmin == False:
+                return False, False
+        if abs(rmax-lmin)>1 or abs(lmax-rmin)>1:
+            return False, False
+        else:
+            return 1+min(lmin,rmin), 1+max(lmax,rmax)
+
+
+
+
     def __cmp__(self, bst):
         return self.data.__cmp__(bst)
 

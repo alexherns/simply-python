@@ -1,5 +1,6 @@
 from collections import defaultdict
-import Queue, sys 
+from simply_python import sorting
+import sys, math 
 
 class LinkedList(object):
     """An instance maintains a representation of a LinkedList"""
@@ -64,6 +65,8 @@ class LinkedList(object):
     def pop(self):
         """Removes and returns head"""
         node= self.head
+        if node == None:
+            return None
         self.head= node.child
         node.child= None
         return node
@@ -375,7 +378,11 @@ class Queue(object):
             self.tail.child= node
             self.tail= node
 
-    def deqeue(self):
+    def peek(self):
+        """Peeks at top of queue"""
+        return self.head
+
+    def dequeue(self):
         """Removes nodes from top of queue"""
         if not self.head:
             return None
@@ -395,12 +402,14 @@ class Stack(LinkedList):
     """
 
     def pop(self):
-        return LinkedList.pop(self).data
+        popped= LinkedList.pop(self)
+        if popped != None: return popped
 
     def add(self, node):
         if not isinstance(node, LinkedListNode):
             node= LinkedListNode(node)
         LinkedList.insert(self, node)
+
 
 
 class FIFO_dict(dict):
@@ -555,7 +564,6 @@ class BST(object):
         ll.reverse()
         return ll
 
-
     def find_minimum(self):
         """Get minimum node in tree"""
         if self.left:
@@ -595,26 +603,44 @@ class BST(object):
             else:
                 self.fix_parent(None)
 
+    @staticmethod
+    def build_from_sorted(sorted_list, minloc=None, maxloc=None):
+        """Returns a BST object from a sorted list"""
+        assert sorting.is_sorted(sorted_list)
+        if minloc == None: minloc= 0
+        if maxloc == None: maxloc= len(sorted_list)-1
+        if minloc > maxloc: return None
+        elif minloc == maxloc: return BST(sorted_list[minloc])
+        center= 2**int(math.log(maxloc-minloc+1,2))-1+minloc
+        bst= BST(sorted_list[center])
+        bst.left= BST.build_from_sorted(sorted_list, minloc, center-1)
+        if bst.left != None:
+            bst.left.parent= bst
+        bst.right= BST.build_from_sorted(sorted_list, center+1, maxloc)
+        if bst.right != None:
+            bst.right.parent= bst
+        return bst
+
     def __cmp__(self, bst):
-        return self.data.__cmp__(bst.data)
+        return self.data.__cmp__(bst)
 
     def __lt__(self, bst):
-        return self.data < bst.data
+        return self.data < bst
 
     def __le__(self, bst):
-        return self.data <= bst.data
+        return self.data <= bst
 
     def __eq__(self, bst):
-        return self.data == bst.data
+        return self.data == bst
 
     def __ne__(self, bst):
-        return self.data != bst.data
+        return self.data != bst
 
     def __ge__(self, bst):
-        return self.data >= bst.data
+        return self.data >= bst
 
     def __gt__(self, bst):
-        return self.data > bst.data
+        return self.data > bst
 
     def __repr__(self):
         return "<BST: {0}>".format(self.data.__repr__())

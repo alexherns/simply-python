@@ -298,13 +298,13 @@ class Queue_Tests(unittest.TestCase):
         queue= data_structures.Queue()
         nodes= [data_structures.LinkedListNode(i) for i in range(1, 11)]
         queue.enqueue(nodes[0])
-        self.assertEqual(queue.deqeue(), nodes[0])
+        self.assertEqual(queue.dequeue(), nodes[0])
         self.assertIsNone(queue.head)
         self.assertIsNone(queue.tail)
         for node in nodes:
             queue.enqueue(node)
         for node in nodes:
-            self.assertEqual(queue.deqeue(), node)
+            self.assertEqual(queue.dequeue(), node)
         self.assertIsNone(queue.head)
         self.assertIsNone(queue.tail)
         
@@ -423,6 +423,23 @@ class BST_Tests(unittest.TestCase):
             bst.insert(sub_tree)
         ll= bst.convert_to_ll()
         self.assertTrue(sorting.is_sorted([node.data for node in ll]))
+
+    def test_build_from_sorted(self):
+        l= [1,2]
+        bst= data_structures.BST.build_from_sorted(l)
+        self.assertEqual(bst.data, 2)
+        self.assertEqual(bst.left.data, 1)
+        self.assertEqual(bst.right, None)
+        l= [1, 2, 3, 4]
+        bst= data_structures.BST.build_from_sorted(l)
+        self.assertEqual(bst.data, 4)
+        self.assertEqual(bst.left.right, 3)
+        self.assertEqual(bst.right, None)
+        l= range(8)
+        bst= data_structures.BST.build_from_sorted(l)
+        ll= bst.convert_to_ll()
+        self.assertEqual(ll.head, 0)
+        
 
 class BST_PQTests(unittest.TestCase):
 

@@ -17,6 +17,7 @@ class LinkedListNodeTests(unittest.TestCase):
         node2= data_structures.LinkedListNode(2)
         self.assertNotEqual(node1, node2)
 
+
 class LinkedListTests(unittest.TestCase):
     
     def test_init(self):
@@ -154,6 +155,7 @@ class LinkedListTests(unittest.TestCase):
             ll.build_from_list(l)
             self.assertEqual(ll.is_palindrome(), outcome)
 
+
 class StackTests(unittest.TestCase):
     
     def test_add(self):
@@ -166,6 +168,7 @@ class StackTests(unittest.TestCase):
         stack.add(3)
         self.assertEqual(stack.pop(), 3)
         self.assertEqual(stack.pop(), 2)
+
 
 class DoublyLinkedListNodeTests(unittest.TestCase):
 
@@ -180,6 +183,7 @@ class DoublyLinkedListNodeTests(unittest.TestCase):
         self.assertEqual(node1, node2)
         node2= data_structures.DoublyLinkedListNode(2)
         self.assertNotEqual(node1, node2)
+
 
 class DoublyLinkedListTests(unittest.TestCase):
 
@@ -263,6 +267,7 @@ class DoublyLinkedListTests(unittest.TestCase):
         self.assertEqual(dll.last.parent, node1)
         self.assertEqual(dll.first.child, node3)
 
+
 class FIFO_QueueTests(unittest.TestCase):
 
     def test_pop(self):
@@ -272,6 +277,7 @@ class FIFO_QueueTests(unittest.TestCase):
             fifo.add(node)
         for node in nodes:
             self.assertEqual(fifo.pop(), node)
+
 
 class Queue_Tests(unittest.TestCase):
 
@@ -307,7 +313,8 @@ class Queue_Tests(unittest.TestCase):
             self.assertEqual(queue.dequeue(), node)
         self.assertIsNone(queue.head)
         self.assertIsNone(queue.tail)
-        
+
+
 class FIFO_DictTests(unittest.TestCase):
 
     def test_methods(self):
@@ -318,6 +325,7 @@ class FIFO_DictTests(unittest.TestCase):
         for node in nodes:
             self.assertEqual(fifo.pop(), node)
         self.assertTrue(fifo.isempty())
+
 
 class CircularBufferTests(unittest.TestCase):
 
@@ -340,11 +348,13 @@ class CircularBufferTests(unittest.TestCase):
         for i in range(100)[-10:]:
             self.assertEqual(cb.pop(), i)
 
+
 class FIFO_CircTests(unittest.TestCase):
 
     def test_init(self):
         fifo= data_structures.FIFO_circ(size=10)
         self.assertEqual(fifo.size, 10)
+
 
 class BST_Tests(unittest.TestCase):
 
@@ -461,7 +471,73 @@ class BST_Tests(unittest.TestCase):
         for test_list, response in tests:
             bst= data_structures.BST.build_from_sorted(test_list)
             self.assertEqual(bst.isBalanced(), response)
+
+    def test_finder(self):
+        bst= data_structures.BST(0)
+        self.assertEqual(bst.find_node(0), bst)
+        self.assertEqual(bst.find_node(1), None)
+        self.assertEqual(bst.find_node(-1), None)
+        bst.insert(data_structures.BST(-1))
+        bst.insert(data_structures.BST(1))
+        self.assertEqual(bst.find_node(-1), bst.left)
+        self.assertEqual(bst.find_node(1), bst.right)
+        self.assertEqual(bst.find_node(2), None)
+        bst= data_structures.BST.build_from_sorted(range(10))
+        for i in range(10):
+            self.assertEqual(bst.find_node(i), data_structures.BST(i))
         
+    def test_minimum(self):
+        bst= data_structures.BST(0)
+        bst.insert(data_structures.BST(1))
+        self.assertEqual(bst.find_minimum(), bst)
+        bst.insert(data_structures.BST(-1))
+        self.assertEqual(bst.find_minimum(), data_structures.BST(-1))
+        bst= data_structures.BST.build_from_sorted(range(10))
+        self.assertEqual(bst.right.find_minimum(), data_structures.BST(8))
+
+    def test_next(self):
+        bst= data_structures.BST(0)
+        self.assertEqual(bst.find_next(), None)
+        bst.insert(data_structures.BST(-1))
+        self.assertEqual(bst.find_next(), None)
+        bst.insert(data_structures.BST(1))
+        self.assertEqual(bst.find_next(), data_structures.BST(1))
+        self.assertEqual(bst.left.find_next(), bst)
+        bst= data_structures.BST.build_from_sorted(range(101))
+        for i in range(100):
+            self.assertEqual(bst.find_node(i).find_next(), bst.find_node(i+1))
+
+
+class BTree_Tests(unittest.TestCase):
+
+    def test_isBST1(self):
+        bt= data_structures.BTree
+        tree= bt(0)
+        tree.left= bt(-1)
+        tree.right= bt(1)
+        self.assertEqual(tree.isBST1(), True)
+        tree.left.right= bt(-0.5)
+        tree.left.left= bt(-2)
+        tree.right.left= bt(0.5)
+        tree.right.right= bt(2)
+        self.assertEqual(tree.isBST1(), True)
+        tree.right.right= bt(-3)
+        self.assertEqual(tree.isBST1(), False)
+
+    def test_isBST2(self):
+        bt= data_structures.BTree
+        tree= bt(0)
+        tree.left= bt(-1)
+        tree.right= bt(1)
+        self.assertEqual(tree.isBST2(), True)
+        tree.left.right= bt(-0.5)
+        tree.left.left= bt(-2)
+        tree.right.left= bt(0.5)
+        tree.right.right= bt(2)
+        self.assertEqual(tree.isBST2(), True)
+        tree.right.right= bt(-3)
+        self.assertEqual(tree.isBST2(), False)
+
 
 class BST_PQTests(unittest.TestCase):
 
@@ -490,6 +566,7 @@ class BST_PQTests(unittest.TestCase):
         for _ in range(7):
             contents.append(pq.pop())
         self.assertTrue(sorting.is_sorted(contents))
+
 
 class GraphTests(unittest.TestCase): 
 #
@@ -630,6 +707,7 @@ class GraphTests(unittest.TestCase):
 #
     pass
 
+
 class MaxHeapTests(unittest.TestCase):
 
     def test_init(self):
@@ -638,6 +716,7 @@ class MaxHeapTests(unittest.TestCase):
             B= data_structures.MaxHeap([random.random() for _ in range(i)])
             self.assertTrue(B.is_heaped())
 
+
 class MinHeapTests(unittest.TestCase):
     
     def test_init(self):
@@ -645,6 +724,7 @@ class MinHeapTests(unittest.TestCase):
         for i in range(10, 100):
             B= data_structures.MinHeap([random.random() for _ in range(i)])
             self.assertTrue(B.is_heaped())
+
 
 class LinearHashTests(unittest.TestCase):
 
@@ -667,6 +747,7 @@ class LinearHashTests(unittest.TestCase):
         self.assertRaises(KeyError, table.get, 'two')
         table.add('two', 2)
         self.assertEqual(table.get('two'), 2)
+
 
 class BetterHashTests(unittest.TestCase):
 
@@ -695,6 +776,7 @@ class BetterHashTests(unittest.TestCase):
         table.add('two', 2)
         self.assertEqual(table.get('two'), 2)
 
+
 class HashTableTests(unittest.TestCase):
 
     def test_init(self):
@@ -721,6 +803,7 @@ class HashTableTests(unittest.TestCase):
             table.add(str(i), i)
         self.assertEqual(table.size, 100)
         self.assertEqual(table.maps.size, 128)
+
 
 class StringBufferTests(unittest.TestCase):
 

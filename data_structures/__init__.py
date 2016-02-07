@@ -521,14 +521,139 @@ class FIFO_circ(CircularBuffer):
 
 
 
-class BST(object):
-    """Implementation of a binary search tree using pointers"""
+class BTree(object):
+    """Implementation of a binary tree using pointers"""
 
     def __init__(self, data):
         self.data= data
         self.left= None
         self.right= None
         self.parent= None
+
+    def __iter__(self):
+        """Iterate through subtrees in order"""
+        if self.left:
+            for node in self.left:
+                yield node
+        yield self
+        if self.right:
+            for node in self.right:
+                yield node
+
+    def convert_to_ll(self):
+        """Returns the tree as a linked list (in order)"""
+        ll= LinkedList()
+        for subtree in self:
+            node= LinkedListNode(subtree.data)
+            ll.insert(node)
+        ll.reverse()
+        return ll
+
+    def isBalanced(self):
+        """Returns if tree is balanced (i.e. has no left or right subtrees with
+        length difference more than 1)"""
+        if self._isbalanced()[0] == False:
+            return False
+        else:
+            return True
+
+    def _isbalanced(self):
+        """Worker function for the isBalanced method"""
+        if self.left == None:
+            lmin, lmax= 0, 0
+        else:
+            lmin, lmax= self.left._isbalanced()
+            if lmin == False:
+                return False, False
+        if self.right == None:
+            rmin, rmax= 0, 0
+        else:
+            rmin, rmax= self.right._isbalanced()
+            if rmin == False:
+                return False, False
+        if abs(rmax-lmin)>1 or abs(lmax-rmin)>1:
+            return False, False
+        else:
+            return 1+min(lmin,rmin), 1+max(lmax,rmax)
+
+    def find_node(self, data):
+        """Finds node containing "data" within Tree in O(n) time"""
+        for tree in self:
+            if tree == data:
+                return tree
+
+    def isBST1(self):
+        """Determines if Binary Tree is a BST using min/max properties"""
+        if self._isBST1()[0] == False:
+            return False
+        return True
+
+    def _isBST1(self):
+        """Worker for isBST1"""
+        if self.left == None and self.right == None:
+            return self, self
+        if self.right != None:
+            rmin, rmax= self.right._isBST1()
+        else:
+            rmin, rmax= self, self
+        if self.left != None:
+            lmin, lmax= self.left._isBST1()
+        else:
+            lmin, lmax= self, self
+        if lmin == False or rmin == False:
+            return False, False
+        elif lmax > self or self >= rmin:
+            return False, False
+        else:
+            return lmin, rmax
+
+    def isBST2(self):
+        """Determines if Binary Tree is a BST using in order traversal"""
+        BTree.lastSeen= -sys.maxint
+        try:
+            return self._isBST2()
+        finally:
+            BTree.lastSeen= -sys.maxint
+
+    def _isBST2(self):
+        """Worker for isBST2"""
+        if self.left and not self.left._isBST2():
+            return False
+        if self < BTree.lastSeen:
+            return False
+        BTree.lastSeen= self
+        if self.right and not self.right._isBST2():
+            return False
+        return True
+
+    def __cmp__(self, bst):
+        return self.data.__cmp__(bst)
+
+    def __lt__(self, bst):
+        return self.data < bst
+
+    def __le__(self, bst):
+        return self.data <= bst
+
+    def __eq__(self, bst):
+        return self.data == bst
+
+    def __ne__(self, bst):
+        return self.data != bst
+
+    def __ge__(self, bst):
+        return self.data >= bst
+
+    def __gt__(self, bst):
+        return self.data > bst
+
+    def __repr__(self):
+        return "<BST: {0}>".format(self.data.__repr__())
+
+
+
+class BST(BTree):
+    """Implementation of a binary search tree using a BTree"""
 
     def insert(self, bst):
         """Insert subtree bst at appropriate location"""
@@ -544,31 +669,35 @@ class BST(object):
             else:
                 self.right= bst
                 bst.parent= self
-            
-    def __iter__(self):
-        """Iterate through subtrees in increasing order"""
-        if self.left:
-            for node in self.left:
-                yield node
-        yield self
-        if self.right:
-            for node in self.right:
-                yield node
-
-    def convert_to_ll(self):
-        """Returns the BST as a linked list"""
-        ll= LinkedList()
-        for subtree in self:
-            node= LinkedListNode(subtree.data)
-            ll.insert(node)
-        ll.reverse()
-        return ll
 
     def find_minimum(self):
         """Get minimum node in tree"""
         if self.left:
             return self.left.find_minimum()
         return self
+
+    def find_next(self):
+        """Get next node in order from tree"""
+        if self.right:
+            return self.right.find_minimum()
+        parent= self.parent
+        while parent != None and parent < self:
+            parent= parent.parent
+        if parent > self:
+            return parent
+        else:
+            return None
+
+    def find_node(self, data):
+        """Finds node containing "data" within BST in O(logn) time"""
+        if self == data:
+            return self
+        elif self > data and self.left:
+            return self.left.find_node(data)
+        elif self < data and self.right:
+            return self.right.find_node(data)
+        else:
+            return None
 
     def fix_parent(self, bst):
         """Deletes self, inserting bst in its place"""
@@ -620,60 +749,6 @@ class BST(object):
         if bst.right != None:
             bst.right.parent= bst
         return bst
-
-    def isBalanced(self):
-        """Returns if BST is balanced (i.e. has no left or right subtrees with
-        length difference more than 1)"""
-        if self._isbalanced()[0] == False:
-            return False
-        else:
-            return True
-
-    def _isbalanced(self):
-        """Worker function for the isBalanced method"""
-        if self.left == None:
-            lmin, lmax= 0, 0
-        else:
-            lmin, lmax= self.left._isbalanced()
-            if lmin == False:
-                return False, False
-        if self.right == None:
-            rmin, rmax= 0, 0
-        else:
-            rmin, rmax= self.right._isbalanced()
-            if rmin == False:
-                return False, False
-        if abs(rmax-lmin)>1 or abs(lmax-rmin)>1:
-            return False, False
-        else:
-            return 1+min(lmin,rmin), 1+max(lmax,rmax)
-
-
-
-
-    def __cmp__(self, bst):
-        return self.data.__cmp__(bst)
-
-    def __lt__(self, bst):
-        return self.data < bst
-
-    def __le__(self, bst):
-        return self.data <= bst
-
-    def __eq__(self, bst):
-        return self.data == bst
-
-    def __ne__(self, bst):
-        return self.data != bst
-
-    def __ge__(self, bst):
-        return self.data >= bst
-
-    def __gt__(self, bst):
-        return self.data > bst
-
-    def __repr__(self):
-        return "<BST: {0}>".format(self.data.__repr__())
 
 
 

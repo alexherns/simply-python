@@ -545,6 +545,16 @@ class BST_Tests(unittest.TestCase):
         self.assertEqual(data_structures.BST.mrca(bst.right.left.left,
             bst.left.right.right), bst)
 
+    def test_subtree(self):
+        bfs= data_structures.BST.build_from_sorted
+        bst= bfs(range(15))
+        self.assertEqual(bst.containsSubTree(bfs(range(3))), True)
+        self.assertEqual(bst.containsSubTree(bfs(range(4, 7))), True)
+        self.assertEqual(bst.containsSubTree(bfs(range(7))), True)
+        self.assertEqual(bst.containsSubTree(bfs(range(8, 15))), True)
+        self.assertEqual(bst.containsSubTree(bfs(range(4))), False)
+        self.assertEqual(bst.containsSubTree(bfs(range(5))), False)
+
 
 class BTree_Tests(unittest.TestCase):
 
@@ -588,6 +598,16 @@ class BTree_Tests(unittest.TestCase):
         self.assertEqual(bt.mrca(tree, tree.right), tree)
         self.assertEqual(bt.mrca(tree.left, tree.right), tree)
         self.assertEqual(bt.mrca(tree.right, tree.left), tree)
+
+    def test_matches(self):
+        bt= data_structures.BTree
+        tree= bt(0)
+        self.assertEqual(tree.fullmatch(bt(0)), True)
+        self.assertEqual(tree.fullmatch(bt(1)), False)
+        tree2= bt(0)
+        tree2.right= bt(1)
+        tree2.right.parent= tree2
+        self.assertEqual(tree.fullmatch(tree2), False)
 
 
 class BST_PQTests(unittest.TestCase):

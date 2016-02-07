@@ -674,6 +674,35 @@ class BTree(object):
             parent= child.parent
         return None
 
+    def containsSubTree(self, subTree):
+        """Returns True if subTree is a sub tree of tree"""
+        for startTree in self:
+            if startTree.fullmatch(subTree):
+                return True
+        return False
+
+    def fullmatch(self, tree):
+        """Returns True if self is recursively equal to tree"""
+        iter1= self.__iter__()
+        iter2= tree.__iter__()
+        node1= iter1.next()
+        node2= iter2.next()
+        while True:
+            if node1 != node2:
+                return False
+            try:
+                node2= iter2.next()
+            except StopIteration:
+                try:
+                    iter1.next()
+                except StopIteration:
+                    return True
+                return False
+            try:
+                node1= iter1.next()
+            except StopIteration:
+                return False
+
     def __cmp__(self, bst):
         return self.data.__cmp__(bst)
 

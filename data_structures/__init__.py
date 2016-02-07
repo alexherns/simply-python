@@ -654,6 +654,25 @@ class BTree(object):
                 lists[-1].insert(LinkedListNode(tree))
         return lists
 
+    @staticmethod
+    def mrca(tree1, tree2):
+        """Returns the most recent common ancestor of two trees"""
+        if tree1.find_node(tree2):
+            return tree1
+        if tree2.find_node(tree1):
+            return tree2
+        parent= tree1.parent
+        child= tree1
+        while parent != None:
+            if parent.left == child and parent.right != None \
+                    and parent.right.find_node(tree2) != None:
+                return parent
+            if parent.right == child and parent.left != None \
+                    and parent.left.find_node(tree2) != None:
+                return parent
+            child= parent
+            parent= child.parent
+        return None
 
     def __cmp__(self, bst):
         return self.data.__cmp__(bst)

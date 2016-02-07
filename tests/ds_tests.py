@@ -533,6 +533,18 @@ class BST_Tests(unittest.TestCase):
         self.assertEqual(bst.listByLevel()[3].head.child.data,
                 bst.left.right.left)
 
+    def test_mrca(self):
+        bst= data_structures.BST.build_from_sorted(range(1, 16))
+        self.assertEqual(data_structures.BST.mrca(bst.left, bst.right), bst)
+        self.assertEqual(data_structures.BST.mrca(bst.left.left, bst.right), bst)
+        self.assertEqual(data_structures.BST.mrca(bst.left.right.left, bst.right), bst)
+        self.assertEqual(data_structures.BST.mrca(bst.left.left,
+            bst.left.right), bst.left)
+        self.assertEqual(data_structures.BST.mrca(bst.left.left.left,
+            bst.right.right.right), bst)
+        self.assertEqual(data_structures.BST.mrca(bst.right.left.left,
+            bst.left.right.right), bst)
+
 
 class BTree_Tests(unittest.TestCase):
 
@@ -563,6 +575,19 @@ class BTree_Tests(unittest.TestCase):
         self.assertEqual(tree.isBST2(), True)
         tree.right.right= bt(-3)
         self.assertEqual(tree.isBST2(), False)
+
+    def test_mrca(self):
+        bt= data_structures.BTree
+        tree= bt(0)
+        tree.left= bt(-1)
+        tree.right= bt(1)
+        tree.left.parent= tree
+        tree.right.parent= tree
+        self.assertEqual(bt.mrca(tree, tree), tree)
+        self.assertEqual(bt.mrca(tree.left, tree), tree)
+        self.assertEqual(bt.mrca(tree, tree.right), tree)
+        self.assertEqual(bt.mrca(tree.left, tree.right), tree)
+        self.assertEqual(bt.mrca(tree.right, tree.left), tree)
 
 
 class BST_PQTests(unittest.TestCase):

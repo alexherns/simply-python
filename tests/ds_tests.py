@@ -155,6 +155,16 @@ class LinkedListTests(unittest.TestCase):
             ll.build_from_list(l)
             self.assertEqual(ll.is_palindrome(), outcome)
 
+    def test_tolist(self):
+        ll= data_structures.LinkedList()
+        self.assertEqual(ll.to_list(), [])
+        ll.insert(data_structures.LinkedListNode(0))
+        self.assertEqual(ll.to_list(), [0])
+        ll.insert(data_structures.LinkedListNode(1))
+        ll.insert(data_structures.LinkedListNode(2))
+        self.assertEqual(ll.to_list(), [2, 1, 0])
+        
+
 
 class StackTests(unittest.TestCase):
     
@@ -506,6 +516,22 @@ class BST_Tests(unittest.TestCase):
         bst= data_structures.BST.build_from_sorted(range(101))
         for i in range(100):
             self.assertEqual(bst.find_node(i).find_next(), bst.find_node(i+1))
+
+    def test_listbylevel(self):
+        bst= data_structures.BST(5)
+        self.assertIsInstance(bst.listByLevel(), list)
+        self.assertIsInstance(bst.listByLevel()[0], data_structures.LinkedList)
+        self.assertIsInstance(bst.listByLevel()[0].head,
+                data_structures.LinkedListNode)
+        self.assertEqual(bst.listByLevel()[0].head.data, bst)
+        bst= data_structures.BST.build_from_sorted([4, 5, 6])
+        self.assertEqual(bst.listByLevel()[0].head.data, bst)
+        self.assertEqual(bst.listByLevel()[1].head.data, bst.right)
+        self.assertEqual(bst.listByLevel()[1].head.child.data, bst.left)
+        bst= data_structures.BST.build_from_sorted(range(10))
+        self.assertEqual(bst.listByLevel()[0].head.data, bst)
+        self.assertEqual(bst.listByLevel()[3].head.child.data,
+                bst.left.right.left)
 
 
 class BTree_Tests(unittest.TestCase):

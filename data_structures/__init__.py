@@ -20,6 +20,13 @@ class LinkedList(object):
         for item in l[::-1]:
             self.insert(LinkedListNode(item))
 
+    def to_list(self):
+        """Returns a list from items in linkedlist"""
+        l= []
+        for node in self:
+            l.append(node.data)
+        return l
+
     def insert(self, node):
         """Inserts node data at beginning of list"""
         node.child= self.head
@@ -174,6 +181,8 @@ class LinkedList(object):
     def __iter__(self):
         """Iterates through nodes in LinkedList"""
         node= self.head
+        if node == None:
+            return
         while node.child:
             yield node
             node= node.child
@@ -625,6 +634,26 @@ class BTree(object):
         if self.right and not self.right._isBST2():
             return False
         return True
+
+    def listByLevel(self):
+        """Create a linked list of nodes at each level"""
+        loadq= Queue()
+        unloadq= Queue()
+        lists= []
+        loadq.enqueue(self)
+        while loadq.peek() != None:
+            lists.append(LinkedList())
+            while loadq.peek() != None:
+                unloadq.enqueue(loadq.dequeue())
+            while unloadq.peek() != None:
+                tree= unloadq.dequeue()
+                if tree.left != None:
+                    loadq.enqueue(tree.left)
+                if tree.right != None:
+                    loadq.enqueue(tree.right)
+                lists[-1].insert(LinkedListNode(tree))
+        return lists
+
 
     def __cmp__(self, bst):
         return self.data.__cmp__(bst)

@@ -592,7 +592,7 @@ class BTree(object):
                 return tree
 
     def isBST1(self):
-        """Determines if Binary Tree is a BST using min/max properties"""
+        """Return 'self is a BST' using min/max properties"""
         if self._isBST1()[0] == False:
             return False
         return True
@@ -617,7 +617,7 @@ class BTree(object):
             return lmin, rmax
 
     def isBST2(self):
-        """Determines if Binary Tree is a BST using in order traversal"""
+        """Return 'self is a BST' using in-order traversal"""
         BTree.lastSeen= -sys.maxint
         try:
             return self._isBST2()
@@ -636,7 +636,7 @@ class BTree(object):
         return True
 
     def listByLevel(self):
-        """Create a linked list of nodes at each level"""
+        """Create linked list of nodes at each level"""
         loadq= Queue()
         unloadq= Queue()
         lists= []
@@ -656,7 +656,7 @@ class BTree(object):
 
     @staticmethod
     def mrca(tree1, tree2):
-        """Returns the most recent common ancestor of two trees"""
+        """Return most recent common ancestor of two trees"""
         if tree1.find_node(tree2):
             return tree1
         if tree2.find_node(tree1):
@@ -675,14 +675,14 @@ class BTree(object):
         return None
 
     def containsSubTree(self, subTree):
-        """Returns True if subTree is a sub tree of tree"""
+        """Return 'subTree is a sub tree of tree'"""
         for startTree in self:
             if startTree.fullmatch(subTree):
                 return True
         return False
 
     def fullmatch(self, tree):
-        """Returns True if self is recursively equal to tree"""
+        """Return 'self is recursively equal to tree'"""
         iter1= self.__iter__()
         iter2= tree.__iter__()
         node1= iter1.next()

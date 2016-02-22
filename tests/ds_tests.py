@@ -928,5 +928,55 @@ class StringBufferTests(unittest.TestCase):
         self.assertEqual(str(sb+wb), 'helloworld')
 
 
+class BitVectorTests(unittest.TestCase):
+
+    def test_init(self):
+        bv= data_structures.BitVector(size=100)
+        self.assertEqual(bv.size, 100)
+        self.assertEqual(len(bv.array), 4)
+        self.assertEqual(bv.array[0], 0)
+        bv2= data_structures.BitVector(size=100, preset=True)
+        self.assertEqual(bv2.array[0], 4294967295)
+
+    def test_checkbit(self):
+        bv= data_structures.BitVector(size=100)
+        for i in range(100):
+            self.assertEqual(bv.checkBit(i), 0)
+            self.assertEqual(bv[i], 0)
+        bv2= data_structures.BitVector(size=100, preset=True)
+        for i in range(100):
+            self.assertEqual(bv2.checkBit(i), 1)
+            self.assertEqual(bv2[i], 1)
+
+    def test_checkslice(self):
+        bv= data_structures.BitVector(size=100)
+        self.assertEqual(bv[:20], [0 for _ in range(20)])
+        bv2= data_structures.BitVector(size=150, preset=True)
+        self.assertEqual(bv2[100:130], [1 for _ in range(30)])
+
+    def test_checkset(self):
+        bv= data_structures.BitVector(size=50)
+        bv.setBit(30)
+        self.assertEqual(bv[29], 0)
+        self.assertEqual(bv[30], 1)
+        self.assertEqual(bv[31], 0)
+        bv[24]= 12
+        self.assertEqual(bv[24], 1)
+        bv[24]= False
+        self.assertEqual(bv[24], 0)
+
+    def test_clear(self):
+        bv= data_structures.BitVector(size=40, preset=True)
+        bv.clearBit(22)
+        self.assertEqual(bv[22], 0)
+
+    def test_switch(self):
+        bv= data_structures.BitVector(size= 23, preset=True)
+        self.assertEqual(bv[12], 1)
+        bv.switchBit(12)
+        self.assertEqual(bv[12], 0)
+        bv.switchBit(12)
+        self.assertEqual(bv[12], 1)
+
 if __name__ == '__main__':
     unittest.main()

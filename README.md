@@ -32,6 +32,7 @@ Currently a work-in-progress as an educational tool for myself, but I'm hoping o
 - Union-find structure (implemented as dict or with pointers)
 - Hash Table (simple to efficient versions)
 - StringBuffer (faster string concatenation)
+- Bit vector
 
 ##Graph Algorithms:
 - Create regular graphs

@@ -1,6 +1,6 @@
 from collections import defaultdict
 from simply_python import sorting
-import sys, math 
+import sys, math, array
 
 class LinkedList(object):
     """An instance maintains a representation of a LinkedList"""
@@ -1358,3 +1358,67 @@ class StringBuffer(object):
 
     def __eq__(self, other):
         return self.buffer == other.buffer
+
+
+
+class BitVector(object):
+    """Implementation of a bit vector/array for compact storage of bits using
+    32-bit integers. Inspired by wiki.python BitArrays"""
+
+    def __init__(self, size=2**32, preset=False):
+        """Initialize an instance of a BitVector.
+        size (int) = number of bits to store
+        preset (boolean) = fill BitVector with 1s"""
+        self.size= size
+        count= size >> 5
+        if size & 31: 
+            count+= 1
+        if preset: 
+            fill= 4294967295
+        else: 
+            fill= 0
+        self.array= array.array('I')
+        self.array.extend((fill,) * count)
+
+    def checkBit(self, bit_num):
+        """Returns bit at bit_num is set"""
+        int_index= bit_num >> 5
+        bit_loc= bit_num & 31
+        mask= 1 << bit_loc
+        return bool(self.array[int_index] & mask)
+
+    def setBit(self, bit_num):
+        """Sets bit at bit_num"""
+        int_index= bit_num >> 5
+        bit_loc= bit_num & 31
+        mask= 1 << bit_loc
+        self.array[int_index] |= mask
+
+    def clearBit(self, bit_num):
+        """Clears bit at bit_num"""
+        int_index= bit_num >> 5
+        bit_loc= bit_num & 31
+        mask= ~(1 << bit_loc)
+        self.array[int_index] &= mask
+
+    def switchBit(self, bit_num):
+        """Switches state of bit at bit_num"""
+        int_index= bit_num >> 5
+        bit_loc= bit_num & 31
+        mask= 1 << bit_loc
+        self.array[int_index] ^= mask
+
+    def __getitem__(self, bit_num):
+        return self.checkBit(bit_num)
+
+    def __setitem__(self, bit_num, state):
+        if state:
+            self.setBit(bit_num)
+        else:
+            self.clearBit(bit_num)
+
+    def __getslice__(self, start, end):
+        return [self.checkBit(i) for i in xrange(start, end)]
+
+    def __setslice__(self, start, end, mask):
+        pass

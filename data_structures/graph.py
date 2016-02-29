@@ -1,3 +1,7 @@
+import sys
+import simply_python
+
+
 class Graph(dict):
     """
     A dictionary based representation of a graph
@@ -16,14 +20,14 @@ class Graph(dict):
         """
         Adds a vertex to the graph, with no edges defined
         """
-        self[vertex]= {}
+        self[vertex] = {}
 
     def add_edge(self, edge):
         """
         Adds an edge to the graph. If edge already exists, creates it again
         """
-        self[edge[0]][edge[1]]= edge
-        self[edge[1]][edge[0]]= edge
+        self[edge[0]][edge[1]] = edge
+        self[edge[1]][edge[0]] = edge
 
     def get_edge(self, edge):
         """
@@ -54,7 +58,7 @@ class Graph(dict):
         """
         Returns a list of all edges in the Graph
         """
-        es= []
+        es = []
         for vertex1 in self.vertices():
             for vertex2 in self.out_vertices(vertex1):
                 es.append(self[vertex1][vertex2])
@@ -92,15 +96,15 @@ class Graph(dict):
         Adds edges to an edgeless graph to create a regular graph
         """
         self.check_empty()
-        vertices= self.vertices()
-        if len(vertices)*n % 2 != 0:
+        vertices = self.vertices()
+        if len(vertices) * n % 2 != 0:
             raise IndexError
         from numpy.random import choice
-        vertices= self.vertices()
+        vertices = self.vertices()
         for vertex in vertices:
             print vertex
             while len(self.out_edges(vertex)) < n:
-                other= self.minimum_other_vertex(vertex)[1]
+                other = self.minimum_other_vertex(vertex)[1]
                 if len(self.out_edges(other)) < n:
                     self.add_edge((vertex, other))
 
@@ -134,9 +138,9 @@ class Graph(dict):
         """
         Uses Bread-First-Search to determine if Graph is strongly connected
         """
-        q= Queue.Queue()
-        origins= [self.vertices()[0]]
-        traveled= set(origins)
+        q = Queue.Queue()
+        origins = [self.vertices()[0]]
+        traveled = set(origins)
         while origins:
             for o in origins:
                 for child in self.out_vertices(o):
@@ -144,7 +148,7 @@ class Graph(dict):
                         q.put(child)
                         traveled.add(child)
 
-            origins= []
+            origins = []
             while not q.empty():
                 origins.append(q.get())
         if len(traveled) == self.order():
@@ -157,20 +161,20 @@ class Graph(dict):
         concern for edge distances
         """
         for vertex in self.vertices():
-            vertex.d= sys.maxint
+            vertex.d = sys.maxint
         if not source:
-            source= self.vertices()[0]
-        q= miscellany.FIFO_dict()
-        source.d= 0
+            source = self.vertices()[0]
+        q = simply_python.data_structures.FIFO_dict()
+        source.d = 0
         q.append(source)
         while not q.isempty():
-            source= q.pop()
+            source = q.pop()
             print source
             print source.d
-            d= source.d
+            d = source.d
             for out_vertex in self.out_vertices(source):
                 if out_vertex.d == sys.maxint:
-                    out_vertex.d= d+1
+                    out_vertex.d = d + 1
                     q.append(out_vertex)
                 if out_vertex == destination:
                     return out_vertex.d
@@ -181,15 +185,16 @@ class Graph(dict):
         Returns the shortest path length between source and destination where
         edge distance is evaluated
         """
-        if not source: source= self.vertices()[0]
-        source.d= 0
-        q= miscellany.MinPriorityQueue()
+        if not source:
+            source = self.vertices()[0]
+        source.d = 0
+        q = simply_python.data_structures.MinPriorityQueue()
         q.add(source, source.d)
-        visited= set()
-        seen= set()
+        visited = set()
+        seen = set()
         while not q.isempty():
-            source= q.pop()
-            d= source.d
+            source = q.pop()
+            d = source.d
             if source == destination:
                 return d
             visited.add(source)
@@ -197,10 +202,10 @@ class Graph(dict):
                 if out_vertex in visited:
                     continue
                 if out_vertex in seen:
-                    out_vertex.d= min(out_vertex.d, source.d +
-                            self[source][out_vertex].distance)
+                    out_vertex.d = min(out_vertex.d, source.d +
+                                       self[source][out_vertex].distance)
                 else:
-                    out_vertex.d= source.d + self[source][out_vertex].distance
+                    out_vertex.d = source.d + self[source][out_vertex].distance
                 seen.add(out_vertex)
                 q.add(out_vertex, out_vertex.d)
         return d
@@ -209,9 +214,8 @@ class Graph(dict):
         """
         Returns a random node from the Graph that is NOT the current one
         """
-        other_edges= list(set(self.vertices()) - set(exclude))
+        other_edges = list(set(self.vertices()) - set(exclude))
         return random.choice(other_edges)
-
 
 
 class RandomGraph(Graph):
@@ -223,7 +227,7 @@ class RandomGraph(Graph):
         """
         Initializes a RandomGraph with n vertices, and populates it according to function defined in subclass
         """
-        vertices= [Vertex(i) for i in range(n)]
+        vertices = [Vertex(i) for i in range(n)]
         for vertex in vertices:
             self.add_vertex(vertex)
         self.populate_graph()
@@ -245,57 +249,55 @@ class RandomGraph(Graph):
 
 class Erdos_Renyi(RandomGraph):
     """An implementation of a Erdos-Renyi type RandomGraph"""
-    
+
     def __init__(self, n=1, p=1):
-        self.p= float(p)
-        self.n= n
+        self.p = float(p)
+        self.n = n
         super(self.__class__, self).__init__(n=n)
 
     def populate_graph(self):
-        vertices= self.vertices()
+        vertices = self.vertices()
         for i in range(self.order()):
-            for j in range(i+1, self.order()):
+            for j in range(i + 1, self.order()):
                 self.maybe_add_edge((vertices[i], vertices[j]), self.p)
-
 
 
 class SmallWorldGraph(RandomGraph):
     """
     An implementation of a Strogatz-Watts type RandomGraph
-    """ 
+    """
 
     def __init__(self, size=10, K=2, beta=0.3):
         super(self.__class__, self).__init__(n=size)
-        self.size= size
+        self.size = size
         self.fill_small_world(K=K, beta=beta)
-        
+
     def fill_small_world(self, K, beta):
         self.fill_radial(K=K)
         self.fill_rewires(beta=beta)
 
     def fill_radial(self, K):
-        vs= self.vertices()
-        size= len(self)
+        vs = self.vertices()
+        size = len(self)
         for i in range(size):
-            for j in range(1, K/2 + 1):
-                k= (i + j + 1)%size
+            for j in range(1, K / 2 + 1):
+                k = (i + j + 1) % size
                 self.add_edge((vs[i], vs[k]))
 
     def fill_rewires(self, beta):
-        vs= self.vertices()
-        size= len(self)
+        vs = self.vertices()
+        size = len(self)
         for i in vs:
-            js= [j for j in self.out_vertices(i) if j > i]
+            js = [j for j in self.out_vertices(i) if j > i]
             for j in js:
                 if random.random() > beta:
                     continue
-                other= self.choose_random(exclude=[i]+js)
+                other = self.choose_random(exclude=[i] + js)
                 self.remove_edge((i, j))
                 self.add_edge((i, other))
 
     def __len__(self):
         return self.size
-
 
 
 class BarabasiAlbert(RandomGraph):
@@ -309,27 +311,27 @@ class BarabasiAlbert(RandomGraph):
         if size < No:
             raise ValueError("size must be >= No")
         try:
-            size= int(size)
-            No= int(No)
+            size = int(size)
+            No = int(No)
         except ValueError:
             raise ValueError("size and No must be convertible to Type<int>")
         super(self.__class__, self).__init__(n=No)
-        vs= self.vertices()
+        vs = self.vertices()
         for i in range(No):
-            for j in range(i+1, No):
+            for j in range(i + 1, No):
                 self.add_edge((vs[i], vs[j]))
         for i in range(No, size):
-            new_v= Vertex(i)
+            new_v = Vertex(i)
             self.add_vertex(new_v)
             self.connect_barabasi(new_v)
 
     def connect_barabasi(self, vertex):
-        sum_kj= 2*self.size()
+        sum_kj = 2 * self.size()
         for i in self.vertices():
             if i == vertex:
                 continue
-            ki= len(self.out_edges(i))
-            pi= float(ki)/sum_kj
+            ki = len(self.out_edges(i))
+            pi = float(ki) / sum_kj
             print i, pi
             self.maybe_add_edge((vertex, i), pi)
 
@@ -340,12 +342,12 @@ class Vertex(object):
     """
 
     def __init__(self, label=''):
-        self. label= label
+        self. label = label
 
     def __repr__(self):
         return "<Vertex: {0}>".format(repr(self.label))
 
-    __str__  = __repr__
+    __str__ = __repr__
 
     def __lt__(self, other):
         return self.label < other.label
@@ -378,6 +380,3 @@ class Edge(tuple):
         return "<Edge: ({0}, {1})".format(repr(self[0]), repr(self[1]))
 
     __str__ = __repr__
-
-
-

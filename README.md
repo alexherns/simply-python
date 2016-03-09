@@ -23,11 +23,13 @@ Currently a work-in-progress as an educational tool for myself, but I'm hoping o
 ##Basic Data Structures:
 - Linked list
 - Doubly linked list
+- Skip list (implemented with an array of linked lists)
 - FIFO queue (implemented as singly and doubly linked list, circular buffer, or dict)
 - Stack (implemented as singly linked list)
 - Circular buffer
 - Binary search tree (implemented with pointers or as an array)
 - Priority queue (implemented as BST or defaultdict)
+- Bounded height priority queue (implemented with an array of linked lists)
 - Max heaps and min heaps (implemented as BST)
 - Union-find structure (implemented as dict or with pointers)
 - Hash Table (simple to efficient versions)

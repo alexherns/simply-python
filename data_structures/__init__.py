@@ -3,6 +3,7 @@ from simply_python import sorting
 import sys
 import math
 import array
+import random
 
 
 class LinkedList(object):
@@ -84,6 +85,15 @@ class LinkedList(object):
     def peek(self):
         """Returns head"""
         return self.head
+
+    def peek_tail(self):
+        """Returns tail node"""
+        node = self.head
+        if node == None:
+            return None
+        while node.child != None:
+            node = node.child
+        return node
 
     def search(self, node):
         """Return true if node in self, else False"""
@@ -937,6 +947,71 @@ class MaxPriorityQueue(PriorityQueue):
         return self[max_pri].pop()
 
 
+class BoundedHeightPQ(object):
+    """Implementation of a Bounded Height Priority Queue, where the priority of
+    each element added to the queue is an integer"""
+
+
+    def __init__(self, max_size=100):
+        """Returns an instance of a BoundedHeightPQ.
+        max_size determines the range of priorities which can be used"""
+        self.size = max_size
+        self.array = []
+        self.min_pri = -1
+        self.max_pri = -1
+        for _ in xrange(max_size):
+            self.array.append(LinkedList())
+
+    def push(self, priority, value):
+        """Pushes value to queue with priority.
+        Updates in O(1)"""
+        assert priority >= 0, "priority must be positive"
+        assert priority < self.size, \
+            "priority must not be larger than {0}".format(self.size)
+        self.array[priority].insert(LinkedListNode(value))
+        if self.min_pri == -1:
+            self.min_pri = priority
+        else:
+            self.min_pri = min(priority, self.min_pri)
+        if self.max_pri == -1:
+            self.max_pri = priority
+        else:
+            self.max_pri = max(priority, self.max_pri)
+
+    def pop_min(self):
+        """Pops minimum element from queue.
+        Updates the min/max in O(k), where k = max_size"""
+        if self.min_pri == -1:
+            return None
+        element = self.array[self.min_pri].pop()
+        if self.min_pri == self.max_pri and self.array[self.min_pri].head == None:
+            self.min_pri = -1
+            self.max_pri = -1
+            return element
+        while self.min_pri < self.max_pri:
+            if self.array[self.min_pri].head != None:
+                break
+            self.min_pri+= 1
+        return element.data
+
+    def pop_max(self):
+        """Pops minimum element from queue.
+        Updates the min/max in O(k), where k = max_size"""
+        if self.max_pri == 01:
+            return None
+        element = self.array[self.max_pri].pop()
+        if self.min_pri == self.max_pri and \
+                self.array[self.min_pri].head == None:
+            self.min_pri = -1
+            self.max_pri = -1
+            return element
+        while self.max_pri > self.min_pri:
+            if self.array[self.max_pri].head != None:
+                break
+            self.max_pri-= 1
+        return element.data
+
+
 class BinaryTree(object):
     """
     Implementation of a Binary Tree using an array
@@ -1408,3 +1483,110 @@ class BitVector(object):
 
     def __setslice__(self, start, end, mask):
         pass
+
+
+class SkipList(object):
+    """Implementation of a skip list using linked lists"""
+
+    def __init__(self, prob=0.5):
+        """Returns an instance of a SkipList.
+        Prob is a parameter for automatic resizing of the SkipList and
+        determines the frequency with which elements are added to the lists.
+        Higher prob --> more frequent additions, less efficiency.
+        prob = 0.5 is default, gives log2(n) time complexity"""
+        self.levels = []
+        self.size = 0
+        self.prob = prob
+        self.new_level()
+        self.new_level()
+
+    def find_min(self):
+        """Returns minimum value in SkipList"""
+        bottom_list_child = self.levels[0].head.child.data
+        if bottom_list_child == sys.maxint:
+            return None
+        return bottom_list_child
+
+    def find_max(self):
+        """Returns maximum value in SkipList"""
+        bottom_list_child = self.levels[0].peek_tail().data
+        if bottom_list_child == sys.maxint:
+            return None
+        return bottom_list_child
+
+    def insert(self, data, level=-1, search_node=None):
+        """Inserts data into SkipList.
+        level and search_node should be left blank"""
+        if self.level_needed():
+            self.new_level()
+        if level == -1:
+            level = len(self.levels)-1
+        node = LinkedListNode(data)
+        if search_node == None:
+            search_node = self.levels[level].peek()
+        while node > search_node.child:
+            search_node = search_node.child
+        if level == 0:
+            temp_node = search_node.child
+            search_node.child = node
+            node.child = temp_node
+            node.below = None
+        else:
+            below = self.insert(data, level=level-1,
+                    search_node=search_node.below)
+            if random.random() > 1-self.prob and below != None:
+                temp_node = search_node.child
+                search_node.child = node
+                node.child = temp_node
+                node.below = below
+            else:
+                return None
+        return node
+
+    def delete(self, data):
+        """Deletes node containing data from SkipList"""
+        level = len(self.levels)-1
+        search_node = self.levels[level].peek()
+        while level >= 0:
+            while data > search_node.child:
+                search_node = search_node.child
+            if search_node.child.data != data:
+                search_node = search_node.below
+                level-= 1
+            else:
+                break
+        if search_node == None:
+            return
+        if search_node.child.data == data:
+            while level >= 0:
+                search_node.child = search_node.child.child
+                search_node = search_node.below
+                level-= 1
+
+    def new_level(self):
+        """Adds new empty level to the SkipList"""
+        new_list = LinkedList()
+        inf_node = LinkedListNode(sys.maxint)
+        neg_node = LinkedListNode(-sys.maxint-1)
+        if len(self.levels) > 0:
+            inf_node.below = self.levels[-1].peek_tail()
+            neg_node.below = self.levels[-1].peek()
+        else:
+            inf_node.below = None
+            neg_node.below = None
+        new_list.insert(inf_node)
+        new_list.insert(neg_node)
+        self.levels.append(new_list)
+
+    def level_needed(self):
+        """Returns True if new level should be added.
+        Levels are added when size > (1/prob)^#levels.
+        No new levels get added if prob == 0"""
+        if not self.prob:
+            return False
+        ideal_maximum = (1/self.prob)**len(self.levels)
+        if self.size >= ideal_maximum:
+            return True
+
+
+

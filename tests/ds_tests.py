@@ -1,5 +1,6 @@
 import unittest
 import random
+import sys
 from simply_python import data_structures
 from simply_python import sorting
 
@@ -110,6 +111,14 @@ class LinkedListTests(unittest.TestCase):
             ll.insert(node)
         for k in range(1, 7):
             self.assertEqual(nodes[k - 1], ll.kth_from_end(k))
+
+    def test_peeks(self):
+        nodes = [data_structures.LinkedListNode(i) for i in range(6)]
+        ll = data_structures.LinkedList()
+        for node in nodes:
+            ll.insert(node)
+        self.assertEqual(ll.peek(), nodes[-1])
+        self.assertEqual(ll.peek_tail(), nodes[0])
 
     def test_list_init(self):
         ll = data_structures.LinkedList()
@@ -982,6 +991,93 @@ class BitVectorTests(unittest.TestCase):
         self.assertEqual(bv[12], 0)
         bv.switchBit(12)
         self.assertEqual(bv[12], 1)
+
+
+class SkipListTests(unittest.TestCase):
+
+    def test_init(self):
+        sl = data_structures.SkipList()
+        self.assertEqual(sl.size, 0)
+        self.assertEqual(len(sl.levels), 2)
+        self.assertEqual(sl.levels[0].peek().data, -sys.maxint-1)
+        self.assertEqual(sl.levels[1].peek().data, -sys.maxint-1)
+        self.assertEqual(sl.levels[0].peek_tail().data, sys.maxint)
+        self.assertEqual(sl.levels[1].peek_tail().data, sys.maxint)
+
+    def test_insert(self):
+        sl = data_structures.SkipList()
+        sl.insert(0)
+        self.assertEqual(sl.levels[0].peek().data, -sys.maxint-1)
+        self.assertEqual(sl.levels[1].peek().data, -sys.maxint-1)
+        self.assertEqual(sl.levels[0].peek_tail().data, sys.maxint)
+        self.assertEqual(sl.levels[1].peek_tail().data, sys.maxint)
+        self.assertEqual(sl.levels[0].head.child.data, 0)
+        sl.insert(1)
+        self.assertEqual(sl.levels[0].head.child.child.data, 1)
+
+    def test_delete(self):
+        sl = data_structures.SkipList(prob=1)
+        sl.new_level()
+        sl.insert(0)
+        sl.insert(1)
+        sl.insert(2)
+        sl.delete(1)
+        self.assertEqual(sl.levels[0].head.child.child.data, 2)
+        self.assertEqual(sl.levels[1].head.child.child.data, 2)
+        self.assertEqual(sl.levels[2].head.child.child.data, 2)
+        sl.delete(2)
+        self.assertEqual(sl.levels[0].head.child.child.data, sys.maxint)
+        self.assertEqual(sl.levels[1].head.child.child.data, sys.maxint)
+        self.assertEqual(sl.levels[2].head.child.child.data, sys.maxint)
+        sl.delete(0)
+        self.assertEqual(sl.levels[0].head.child.data, sys.maxint)
+        self.assertEqual(sl.levels[1].head.child.data, sys.maxint)
+        self.assertEqual(sl.levels[2].head.child.data, sys.maxint)
+
+
+class BoundedHeightPQTests(unittest.TestCase):
+
+    def test_init(self):
+        bh = data_structures.BoundedHeightPQ()
+        self.assertEqual(len(bh.array), bh.size)
+        self.assertEqual(bh.min_pri, -1)
+        self.assertEqual(bh.max_pri, -1)
+
+    def test_push(self):
+        bh = data_structures.BoundedHeightPQ()
+        bh.push(0, "hello")
+        self.assertEqual(bh.min_pri, 0)
+        self.assertEqual(bh.max_pri, 0)
+        self.assertEqual(bh.array[0].head.data, "hello")
+        bh.push(10, "world")
+        self.assertEqual(bh.min_pri, 0)
+        self.assertEqual(bh.max_pri, 10)
+        self.assertEqual(bh.array[10].head.data, "world")
+        bh.push(8, "!")
+        self.assertEqual(bh.min_pri, 0)
+        self.assertEqual(bh.max_pri, 10)
+
+    def test_pops(self):
+        bh = data_structures.BoundedHeightPQ()
+        bh.push(10, "a")
+        bh.push(20, "b")
+        bh.push(15, "c")
+        self.assertEqual(bh.pop_min(), "a")
+        self.assertEqual(bh.min_pri, 15)
+        bh.push(10, "a")
+        self.assertEqual(bh.pop_max(), "b")
+        self.assertEqual(bh.max_pri, 15)
+        bh.push(20, "b")
+        bh.pop_min()
+        self.assertEqual(bh.pop_min(), "c")
+        bh.pop_max()
+        self.assertEqual(bh.min_pri, -1)
+        self.assertEqual(bh.max_pri, -1)
+        self.assertEqual(bh.pop_min(), None)
+
+        
+
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -1589,4 +1589,58 @@ class SkipList(object):
             return True
 
 
+class TrieNode(dict):
+    """Holds a node in a trie as a subclass of the Python dict data
+    structure"""
 
+    def __init__(self, *args):
+        dict.__init__(self, args)
+        self.end = False
+
+
+class Trie:
+    """Implemenation of a trie using a subclass of Python dictionaries as
+    nodes"""
+
+    def __init__(self):
+        self.root = TrieNode()
+
+    def add(self, s):
+        node = self.root
+        for char in s:
+            if char in node:
+                node = node[char]
+            else:
+                node[char] = TrieNode()
+                node = node[char]
+        node.end = True
+
+    def __contains__(self, s):
+        node = self.root
+        for char in s:
+            if char in node:
+                node = node[char]
+            else:
+                return False
+        return node.end
+
+    def __iter__(self, node=None):
+        if node == None:
+            node = self.root
+        if node.end:
+            yield ''
+        for char in node:
+            for sub in self.__iter__(node[char]):
+                yield char + sub
+
+
+class SuffixTree(Trie):
+    """Implementation of a suffix tree using a trie"""
+
+    def __init__(self, word=''):
+        Trie.__init__(self)
+        for start in range(len(word)):
+            Trie.add(self, word[start:])
+
+    def add(self, s):
+        raise NotImplementedError, "add(str) not implemented for SuffixTree"

@@ -28,6 +28,8 @@ Currently a work-in-progress as an educational tool for myself, but I'm hoping o
 - Stack (implemented as singly linked list)
 - Circular buffer
 - Binary search tree (implemented with pointers or as an array)
+- Trie
+- Suffix tree (implemented as a Trie)
 - Priority queue (implemented as BST or defaultdict)
 - Bounded height priority queue (implemented with an array of linked lists)
 - Max heaps and min heaps (implemented as BST)

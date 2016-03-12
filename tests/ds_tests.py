@@ -1076,8 +1076,66 @@ class BoundedHeightPQTests(unittest.TestCase):
         self.assertEqual(bh.pop_min(), None)
 
         
+class TrieTests(unittest.TestCase):
+
+    def test_init(self):
+        tn = data_structures.TrieNode()
+        self.assertEqual(False, tn.end)
+        t = data_structures.Trie()
+        self.assertIsInstance(t.root, data_structures.TrieNode)
+        self.assertEqual(t.root.end, False)
+
+    def test_add(self):
+        t = data_structures.Trie()
+        t.add('h')
+        self.assertTrue('h' in t.root)
+        t.add('er')
+        self.assertTrue('e' in t.root)
+        self.assertTrue('r' in t.root['e'])
+
+    def test_check(self):
+        t = data_structures.Trie()
+        t.add('h')
+        self.assertTrue('h' in t)
+        t.add('ergo')
+        self.assertFalse('e' in t)
+        self.assertFalse('er' in t)
+        self.assertTrue('ergo' in t)
+        self.assertFalse('hello' in t)
+
+    def test_iter(self):
+        t = data_structures.Trie()
+        test_words = ['hello', 
+                'hegemony', 
+                'world',
+                'helper',
+                'worldly',
+                'w']
+        for word in test_words:
+            t.add(word)
+        for word in t:
+            self.assertTrue(word in test_words)
 
 
+class SuffixTesets(unittest.TestCase):
+
+    def test_init(self):
+        t = data_structures.SuffixTree('word')
+        self.assertIsInstance(t.root, data_structures.TrieNode)
+        self.assertTrue('w' in t.root)
+        self.assertTrue('o' in t.root)
+        self.assertTrue('r' in t.root)
+        self.assertTrue('d' in t.root)
+        self.assertTrue('ord' in t)
+        self.assertTrue('rd' in t)
+        self.assertTrue('d' in t)
+        self.assertFalse('wor' in t)
+        self.assertFalse('or' in t)
+        self.assertFalse('w' in t)
+        
+    def test_add(self):
+        t = data_structures.SuffixTree('word')
+        self.assertRaises(NotImplementedError, t.add, 'word2')
 
 if __name__ == '__main__':
     unittest.main()

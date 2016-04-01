@@ -839,6 +839,116 @@ class BST(BTree):
         return bst
 
 
+class AVLTree(object):
+
+    def __init__(self):
+        self.root = None
+
+    def insert(self, value):
+        node = AVLNode(value)
+        node.balance = 0
+        if self.root == None:
+            self.root = node
+        else:
+            self.root.insert(node)
+
+
+class AVLNode(BST):
+    """Implementation of an AVL tree using a BTree"""
+
+    def __init__(self, value):
+        super(AVLNode, self).__init__(value)
+        self.balance = 0
+
+    def _insert(self, avl):
+        """Insert subtree avl at appropriate location"""
+        print "Entering insert: {0}, {1}".format(self, avl)
+        if self > avl:
+            if self.left:
+                if self.left._insert(avl) != 0:
+                    self.balance -= 1
+            else:
+                self.left = avl
+                avl.parent = self
+                self.balance -= 1
+        else:
+            if self.right:
+                if self.right._insert(avl) != 0:
+                    self.balance += 1
+            else:
+                self.right = avl
+                avl.parent = self
+                self.balance += 1
+        if self.balance == -2:
+            if self.left.balance == 1:
+                self.left.balance -= 1
+                self.left.rotate_left()
+            self.rotate_right()
+        elif self.balance == 2:
+            if self.right.balance == -1:
+                self.right.balance += 1
+                self.right.rotate_right()
+            self.rotate_left()
+        return self.balance
+
+    def rotate_left(self):
+        if self.right == None:
+            return
+        if self.parent != None:
+            if self.parent.left == self:
+                self.parent.left = self.right
+            else:
+                self.parent.right = self.right
+        self.right.parent = self.parent
+        self.parent = self.right
+        if self.right.left != None:
+            self.right.left.parent = self
+        tmp = self.right.left
+        self.right.left = self
+        self.right = tmp
+        self.balance = self.balance + 1 - min(self.parent.balance, 0)
+        self.parent.balance = self.parent.balance + 1 + max(self.balance, 0)
+
+    def rotate_right(self):
+        if self.left == None:
+            return
+        if self.parent != None:
+            if self.parent.left == self:
+                self.parent.left = self.left
+            else:
+                self.parent.right = self.left
+        self.left.parent = self.parent
+        self.parent = self.left
+        if self.left.right != None:
+            self.left.right.parent = self
+        tmp = self.left.right
+        self.left.right = self
+        self.left = tmp
+
+    def __lt__(self, avl):
+        return self.data < avl
+
+    def __le__(self, avl):
+        return self.data <= avl
+
+    def __eq__(self, avl):
+        return self.data == avl
+
+    def __ne__(self, avl):
+        return self.data != avl
+
+    def __ge__(self, avl):
+        return self.data >= avl
+
+    def __gt__(self, avl):
+        return self.data > avl
+
+    def __repr__(self):
+        return "<AVL: {0}>".format(self.data.__repr__())
+
+    
+
+
 class BSTPriorityQueue(BST):
     """Implementation of a priority queue as a binary search tree"""
 

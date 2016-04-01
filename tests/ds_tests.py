@@ -1136,6 +1136,135 @@ class SuffixTesets(unittest.TestCase):
     def test_add(self):
         t = data_structures.SuffixTree('word')
         self.assertRaises(NotImplementedError, t.add, 'word2')
+        
+
+class AVLNodeTests(unittest.TestCase):
+
+    def test_init(self):
+        avl = data_structures.AVLNode(5)
+        self.assertEqual(avl.left, None)
+        self.assertEqual(avl.right, None)
+        self.assertEqual(avl.data, 5)
+        self.assertEqual(avl.parent, None)
+
+    def test_lrot(self):
+        t = data_structures.AVLNode
+        avl = data_structures.AVLNode(5)
+        three = t(3)
+        four = t(4)
+        avl.insert(three)
+        avl.insert(four)
+        self.assertEqual(3, avl.left)
+        three.rotate_left()
+        self.assertEqual(4, avl.left)
+        self.assertEqual(None, avl.right)
+        self.assertEqual(None, avl.parent)
+        self.assertEqual(3, four.left)
+        self.assertEqual(None, four.right)
+        self.assertEqual(avl, four.parent)
+        self.assertEqual(None, three.left)
+        self.assertEqual(None, three.right)
+        self.assertEqual(four, three.parent)
+        three.rotate_left()
+        self.assertEqual(three, four.left)
+
+    def test_rrot(self):
+        t = data_structures.AVLNode
+        avl = data_structures.AVLNode(5)
+        three = t(3)
+        four = t(4)
+        avl.insert(four)
+        avl.insert(three)
+        avl.rotate_right()
+        self.assertEqual(None, avl.left)
+        self.assertEqual(None, avl.right)
+        self.assertEqual(four, avl.parent)
+        self.assertEqual(5, four.right)
+        self.assertEqual(3, four.left)
+        self.assertEqual(None, four.parent)
+        self.assertEqual(None, three.left)
+        self.assertEqual(None, three.right)
+        self.assertEqual(four, three.parent)
+        avl.rotate_right()
+        self.assertEqual(avl, four.right)
+
+    def test_full_rot(self):
+        t = data_structures.AVLNode
+        avl = data_structures.AVLNode(5)
+        avl.insert(t(2))
+        avl.insert(t(6))
+        avl.insert(t(5.5))
+        avl.insert(t(6.5))
+        avl.insert(t(1))
+        avl.insert(t(0.5))
+        avl.insert(t(1.5))
+        avl.insert(t(3))
+        avl.insert(t(2.5))
+        avl.insert(t(4))
+        avl.insert(t(3.5))
+        self.assertEqual(avl.left.right.right.left, 3.5)
+        avl.left.rotate_left()
+        self.assertEqual(avl.left, 3)
+        self.assertEqual(avl.left.parent, avl)
+        self.assertEqual(avl.left.left, 2)
+        self.assertEqual(avl.left.left.parent, 3)
+        self.assertEqual(avl.left.right, 4)
+        self.assertEqual(avl.left.right.parent, 3)
+        self.assertEqual(avl.left.left.right, 2.5)
+        self.assertEqual(avl.left.left.right.parent, 2)
+        three = avl.left
+        avl.rotate_right()
+        self.assertEqual(three.right, 5)
+        self.assertEqual(three.left, 2)
+        self.assertEqual(three.right.left, 4)
+
+    def test_insert(self):
+        t = data_structures.AVLNode
+        five = t(5)
+        three = t(3)
+        four = t(4)
+        five._insert(three)
+        self.assertEqual(five.balance, -1)
+        self.assertEqual(three.balance, 0)
+        self.assertEqual(five.left, three)
+        five._insert(four)
+        self.assertEqual(four.left, three)
+        self.assertEqual(four.right, five)
+        self.assertEqual(four.balance, 0)
+        self.assertEqual(three.balance, 0)
+        self.assertEqual(five.balance, 0)
+
+    def best_insert(self):
+        t = data_structures.AVLNode
+        avl = data_structures.AVLNode(5)
+        avl._insert(t(2))
+        avl._insert(t(6))
+        six = avl.right
+        avl._insert(t(5.5))
+        avl._insert(t(6.5))
+        avl._insert(t(1))
+        avl._insert(t(0.5))
+        avl._insert(t(1.5))
+        avl._insert(t(3))
+        avl._insert(t(2.5))
+        avl._insert(t(4))
+        avl._insert(t(3.5))
+        print avl.left, avl.right
+        print avl.left.left, avl.left.right
+        print avl.left.left.left, avl.left.left.right
+        print avl.left.right.left, avl.left.right.right
+        print avl.right.left, avl.right.right
+        print six.left, six.right
+        print six.left.left, six.left.right
+        print six.right.left, six.right.right
+        print six.left.left.left, six.left.left.right
+        print six.left.left.left.left, six.left.left.right.right
+        self.assertTrue(avl.isBST2())
+        self.assertTrue(avl.isBalanced())
+
+
+        
+
 
 if __name__ == '__main__':
     unittest.main()
